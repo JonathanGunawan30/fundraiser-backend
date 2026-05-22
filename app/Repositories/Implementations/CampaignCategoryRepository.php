@@ -33,4 +33,31 @@ class CampaignCategoryRepository implements CampaignCategoryRepositoryInterface
             ->orWhere('slug', 'like', "%{$keyword}%")
             ->paginate($perPage);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function create(array $data): CampaignCategory
+    {
+        return CampaignCategory::create($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(int $id, array $data): CampaignCategory
+    {
+        $category = CampaignCategory::findOrFail($id);
+        $category->update($data);
+        return $category;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(int $id): bool
+    {
+        $category = CampaignCategory::findOrFail($id);
+        return $category->delete();
+    }
 }

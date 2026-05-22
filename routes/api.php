@@ -54,6 +54,13 @@ Route::prefix('auth')->group(function () {
             Route::put('/{banner}', [BannerController::class, 'update']);
             Route::delete('/{banner}', [BannerController::class, 'destroy']);
         });
+
+        // Campaign Categories
+        Route::prefix('campaign-categories')->group(function () {
+            Route::post('/', [CampaignCategoryController::class, 'store']);
+            Route::put('/{campaign_category}', [CampaignCategoryController::class, 'update']);
+            Route::delete('/{campaign_category}', [CampaignCategoryController::class, 'destroy']);
+        });
     });
 });
 
