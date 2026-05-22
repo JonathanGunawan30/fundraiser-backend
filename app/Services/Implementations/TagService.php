@@ -46,4 +46,28 @@ class TagService implements TagServiceInterface
     {
         return $this->tagRepository->search($keyword, $perPage);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function createTag(array $data): Tag
+    {
+        return $this->tagRepository->create($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateTag(int $id, array $data): Tag
+    {
+        return $this->tagRepository->update($id, $data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteTag(int $id): bool
+    {
+        return $this->tagRepository->delete($id);
+    }
 }

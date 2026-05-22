@@ -31,4 +31,29 @@ interface TagRepositoryInterface
      * @return LengthAwarePaginator
      */
     public function search(string $keyword, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Create a new tag.
+     *
+     * @param array $data
+     * @return Tag
+     */
+    public function create(array $data): Tag;
+
+    /**
+     * Update an existing tag.
+     *
+     * @param int $id
+     * @param array $data
+     * @return Tag
+     */
+    public function update(int $id, array $data): Tag;
+
+    /**
+     * Delete a tag.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool;
 }

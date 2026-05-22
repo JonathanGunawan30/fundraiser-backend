@@ -40,6 +40,13 @@ Route::prefix('auth')->group(function () {
             Route::put('/{id}', [FaqController::class, 'update']);
             Route::delete('/{id}', [FaqController::class, 'destroy']);
         });
+
+        // Tags
+        Route::prefix('tags')->group(function () {
+            Route::post('/', [TagController::class, 'store']);
+            Route::put('/{tag}', [TagController::class, 'update']);
+            Route::delete('/{tag}', [TagController::class, 'destroy']);
+        });
     });
 });
 
