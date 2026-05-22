@@ -33,4 +33,31 @@ class TagRepository implements TagRepositoryInterface
             ->orWhere('slug', 'like', "%{$keyword}%")
             ->paginate($perPage);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function create(array $data): Tag
+    {
+        return Tag::create($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(int $id, array $data): Tag
+    {
+        $tag = Tag::findOrFail($id);
+        $tag->update($data);
+        return $tag;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(int $id): bool
+    {
+        $tag = Tag::findOrFail($id);
+        return $tag->delete();
+    }
 }

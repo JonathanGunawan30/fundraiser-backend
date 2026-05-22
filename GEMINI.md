@@ -32,7 +32,7 @@
 
 **General error**
 ```json
-{ "errors": null, "message": "Campaign not found" }
+{ "status": "error", "errors": null, "message": "Campaign not found" }
 ```
 
 **HTTP status codes standard**
