@@ -61,6 +61,13 @@ Route::prefix('auth')->group(function () {
             Route::put('/{campaign_category}', [CampaignCategoryController::class, 'update']);
             Route::delete('/{campaign_category}', [CampaignCategoryController::class, 'destroy']);
         });
+
+        // Site Settings
+        Route::prefix('site-settings')->group(function () {
+            Route::post('/', [SiteSettingController::class, 'store']);
+            Route::put('/{site_setting}', [SiteSettingController::class, 'update']);
+            Route::delete('/{site_setting}', [SiteSettingController::class, 'destroy']);
+        });
     });
 });
 

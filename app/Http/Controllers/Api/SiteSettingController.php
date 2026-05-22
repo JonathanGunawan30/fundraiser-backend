@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\StoreSiteSettingRequest;
+use App\Http\Requests\Api\UpdateSiteSettingRequest;
+use App\Http\Resources\SiteSettingResource;
 use App\Services\Interfaces\SiteSettingServiceInterface;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -31,7 +34,21 @@ class SiteSettingController extends Controller
         $perPage = $request->query('per_page', 10);
         $siteSettings = $this->siteSettingService->getAllSiteSettings($perPage);
 
-        return $this->successWithPagination($siteSettings, 'Site settings retrieved successfully');
+        return $this->successWithPagination(SiteSettingResource::collection($siteSettings), 'Site settings retrieved successfully');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param StoreSiteSettingRequest $request
+     * @return JsonResponse
+     */
+    public function store(StoreSiteSettingRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $siteSetting = $this->siteSettingService->createSiteSetting($data);
+
+        return $this->success(new SiteSettingResource($siteSetting), 'Site setting created successfully', 201);
     }
 
     /**
@@ -44,9 +61,48 @@ class SiteSettingController extends Controller
     {
         try {
             $siteSetting = $this->siteSettingService->getSiteSettingById($id);
-            return $this->success($siteSetting, 'Site setting retrieved successfully');
+            return $this->success(new SiteSettingResource($siteSetting), 'Site setting retrieved successfully');
         } catch (ModelNotFoundException $e) {
             return $this->error($e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param UpdateSiteSettingRequest $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function update(UpdateSiteSettingRequest $request, int $id): JsonResponse
+    {
+        try {
+            $data = $request->validated();
+            $siteSetting = $this->siteSettingService->updateSiteSetting($id, $data);
+
+            return $this->success(new SiteSettingResource($siteSetting), 'Site setting updated successfully');
+        } catch (ModelNotFoundException $e) {
+            return $this->error("Site Setting with ID {$id} not found.", 404);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        try {
+            $this->siteSettingService->deleteSiteSetting($id);
+            return $this->success(null, 'Site setting deleted successfully');
+        } catch (ModelNotFoundException $e) {
+            return $this->error("Site Setting with ID {$id} not found.", 404);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }
@@ -65,6 +121,6 @@ class SiteSettingController extends Controller
         
         $siteSettings = $this->siteSettingService->searchSiteSettings($keyword, $perPage);
 
-        return $this->successWithPagination($siteSettings, 'Site settings search results retrieved successfully');
+        return $this->successWithPagination(SiteSettingResource::collection($siteSettings), 'Site settings search results retrieved successfully');
     }
 }

@@ -46,4 +46,28 @@ class SiteSettingService implements SiteSettingServiceInterface
     {
         return $this->siteSettingRepository->search($keyword, $perPage);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function createSiteSetting(array $data): SiteSetting
+    {
+        return $this->siteSettingRepository->create($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateSiteSetting(int $id, array $data): SiteSetting
+    {
+        return $this->siteSettingRepository->update($id, $data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteSiteSetting(int $id): bool
+    {
+        return $this->siteSettingRepository->delete($id);
+    }
 }

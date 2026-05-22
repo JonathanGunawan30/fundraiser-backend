@@ -31,4 +31,29 @@ interface SiteSettingServiceInterface
      * @return LengthAwarePaginator
      */
     public function searchSiteSettings(string $keyword, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Create a new site setting.
+     *
+     * @param array $data
+     * @return SiteSetting
+     */
+    public function createSiteSetting(array $data): SiteSetting;
+
+    /**
+     * Update an existing site setting.
+     *
+     * @param int $id
+     * @param array $data
+     * @return SiteSetting
+     */
+    public function updateSiteSetting(int $id, array $data): SiteSetting;
+
+    /**
+     * Delete a site setting.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function deleteSiteSetting(int $id): bool;
 }

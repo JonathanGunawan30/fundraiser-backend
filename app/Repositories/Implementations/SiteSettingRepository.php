@@ -32,4 +32,31 @@ class SiteSettingRepository implements SiteSettingRepositoryInterface
         return SiteSetting::where('key', 'like', "%{$keyword}%")
             ->paginate($perPage);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function create(array $data): SiteSetting
+    {
+        return SiteSetting::create($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(int $id, array $data): SiteSetting
+    {
+        $siteSetting = SiteSetting::findOrFail($id);
+        $siteSetting->update($data);
+        return $siteSetting;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(int $id): bool
+    {
+        $siteSetting = SiteSetting::findOrFail($id);
+        return $siteSetting->delete();
+    }
 }
