@@ -31,4 +31,29 @@ interface CampaignCategoryServiceInterface
      * @return LengthAwarePaginator
      */
     public function searchCategories(string $keyword, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Create a new category.
+     *
+     * @param array $data
+     * @return CampaignCategory
+     */
+    public function createCategory(array $data): CampaignCategory;
+
+    /**
+     * Update an existing category.
+     *
+     * @param int $id
+     * @param array $data
+     * @return CampaignCategory
+     */
+    public function updateCategory(int $id, array $data): CampaignCategory;
+
+    /**
+     * Delete a category.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function deleteCategory(int $id): bool;
 }
