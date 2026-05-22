@@ -31,4 +31,29 @@ interface BannerServiceInterface
      * @return LengthAwarePaginator
      */
     public function searchBanners(string $keyword, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Create a new banner.
+     *
+     * @param array $data
+     * @return Banner
+     */
+    public function createBanner(array $data): Banner;
+
+    /**
+     * Update an existing banner.
+     *
+     * @param int $id
+     * @param array $data
+     * @return Banner
+     */
+    public function updateBanner(int $id, array $data): Banner;
+
+    /**
+     * Delete a banner.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function deleteBanner(int $id): bool;
 }

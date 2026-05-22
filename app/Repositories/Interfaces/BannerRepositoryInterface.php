@@ -24,11 +24,36 @@ interface BannerRepositoryInterface
     public function findById(int $id): ?Banner;
 
     /**
-     * Search banners by keyword.
+     * Search banners.
      *
      * @param string $keyword
      * @param int $perPage
      * @return LengthAwarePaginator
      */
     public function search(string $keyword, int $perPage): LengthAwarePaginator;
-}
+
+    /**
+     * Create a new banner.
+     *
+     * @param array $data
+     * @return Banner
+     */
+    public function create(array $data): Banner;
+
+    /**
+     * Update an existing banner.
+     *
+     * @param int $id
+     * @param array $data
+     * @return Banner
+     */
+    public function update(int $id, array $data): Banner;
+
+    /**
+     * Delete a banner.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool;
+    }

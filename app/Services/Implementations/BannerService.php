@@ -7,6 +7,10 @@ use App\Repositories\Interfaces\BannerRepositoryInterface;
 use App\Services\Interfaces\BannerServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
+
+use Illuminate\Support\Str;
 
 class BannerService implements BannerServiceInterface
 {
@@ -45,5 +49,70 @@ class BannerService implements BannerServiceInterface
     public function searchBanners(string $keyword, int $perPage): LengthAwarePaginator
     {
         return $this->bannerRepository->search($keyword, $perPage);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createBanner(array $data): Banner
+    {
+        if (isset($data['image']) && $data['image'] instanceof UploadedFile) {
+            $filename = Str::uuid() . '.' . $data['image']->getClientOriginalExtension();
+            $path = $data['image']->storeAs('banners', $filename, 'r2');
+            $data['image_url'] = Storage::disk('r2')->url($path);
+            unset($data['image']);
+        }
+
+        return $this->bannerRepository->create($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateBanner(int $id, array $data): Banner
+    {
+        if (isset($data['image']) && $data['image'] instanceof UploadedFile) {
+            $banner = $this->getBannerById($id);
+            if ($banner->image_url) {
+                $this->deleteFileFromR2($banner->image_url);
+            }
+
+            $filename = Str::uuid() . '.' . $data['image']->getClientOriginalExtension();
+            $path = $data['image']->storeAs('banners', $filename, 'r2');
+            $data['image_url'] = Storage::disk('r2')->url($path);
+            unset($data['image']);
+        }
+
+        return $this->bannerRepository->update($id, $data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteBanner(int $id): bool
+    {
+        $banner = $this->getBannerById($id);
+        if ($banner->image_url) {
+            $this->deleteFileFromR2($banner->image_url);
+        }
+
+        return $this->bannerRepository->delete($id);
+    }
+
+    /**
+     * Delete file from R2 by URL.
+     *
+     * @param string $url
+     * @return void
+     */
+    protected function deleteFileFromR2(string $url): void
+    {
+        $baseUrl = Storage::disk('r2')->url('');
+        $path = str_replace($baseUrl, '', $url);
+        $path = ltrim($path, '/');
+        
+        if ($path) {
+            Storage::disk('r2')->delete($path);
+        }
     }
 }

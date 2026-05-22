@@ -47,6 +47,13 @@ Route::prefix('auth')->group(function () {
             Route::put('/{tag}', [TagController::class, 'update']);
             Route::delete('/{tag}', [TagController::class, 'destroy']);
         });
+
+        // Banners
+        Route::prefix('banners')->group(function () {
+            Route::post('/', [BannerController::class, 'store']);
+            Route::put('/{banner}', [BannerController::class, 'update']);
+            Route::delete('/{banner}', [BannerController::class, 'destroy']);
+        });
     });
 });
 
