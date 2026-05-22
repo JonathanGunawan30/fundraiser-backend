@@ -24,11 +24,27 @@ interface CampaignImageRepositoryInterface
     public function findById(int $id): ?CampaignImage;
 
     /**
-     * Search campaign images.
+     * Create multiple images for a campaign.
      *
-     * @param string $keyword
-     * @param int $perPage
-     * @return LengthAwarePaginator
+     * @param int $campaignId
+     * @param array $imagesData
+     * @return void
      */
-    public function search(string $keyword, int $perPage): LengthAwarePaginator;
+    public function createMany(int $campaignId, array $imagesData): void;
+
+    /**
+     * Delete multiple images for a campaign.
+     *
+     * @param array $imageIds
+     * @return void
+     */
+    public function deleteMany(array $imageIds): void;
+
+    /**
+     * Delete all images for a campaign.
+     *
+     * @param int $campaignId
+     * @return void
+     */
+    public function deleteAllForCampaign(int $campaignId): void;
 }

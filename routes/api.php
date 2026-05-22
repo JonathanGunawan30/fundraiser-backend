@@ -68,31 +68,26 @@ Route::prefix('auth')->group(function () {
             Route::put('/{site_setting}', [SiteSettingController::class, 'update']);
             Route::delete('/{site_setting}', [SiteSettingController::class, 'destroy']);
         });
+
+        // Campaign Verifications
+        Route::post('campaigns/{id}/verify', [CampaignController::class, 'verify']);
     });
 });
 
+Route::middleware('auth:api')->prefix('auth')->group(function () {
+    // Campaigns (User Actions)
+    Route::prefix('campaigns')->group(function () {
+        Route::post('/', [CampaignController::class, 'store']);
+        Route::put('/{campaign}', [CampaignController::class, 'update']);
+        Route::delete('/{campaign}', [CampaignController::class, 'destroy']);
+    });
+});
+
+// Public Routes
 Route::prefix('campaign-categories')->group(function () {
     Route::get('/', [CampaignCategoryController::class, 'index']);
     Route::get('/search', [CampaignCategoryController::class, 'search']);
     Route::get('/{id}', [CampaignCategoryController::class, 'show']);
-});
-
-Route::prefix('users')->group(function () {
-    Route::get('/', [UserController::class, 'index']);
-    Route::get('/search', [UserController::class, 'search']);
-    Route::get('/{id}', [UserController::class, 'show']);
-});
-
-Route::prefix('admins')->group(function () {
-    Route::get('/', [AdminController::class, 'index']);
-    Route::get('/search', [AdminController::class, 'search']);
-    Route::get('/{id}', [AdminController::class, 'show']);
-});
-
-Route::prefix('tags')->group(function () {
-    Route::get('/', [TagController::class, 'index']);
-    Route::get('/search', [TagController::class, 'search']);
-    Route::get('/{id}', [TagController::class, 'show']);
 });
 
 Route::prefix('campaigns')->group(function () {
@@ -101,34 +96,10 @@ Route::prefix('campaigns')->group(function () {
     Route::get('/{id}', [CampaignController::class, 'show']);
 });
 
-Route::prefix('campaign-updates')->group(function () {
-    Route::get('/', [CampaignUpdateController::class, 'index']);
-    Route::get('/search', [CampaignUpdateController::class, 'search']);
-    Route::get('/{id}', [CampaignUpdateController::class, 'show']);
-});
-
-Route::prefix('campaign-images')->group(function () {
-    Route::get('/', [CampaignImageController::class, 'index']);
-    Route::get('/search', [CampaignImageController::class, 'search']);
-    Route::get('/{id}', [CampaignImageController::class, 'show']);
-});
-
-Route::prefix('donations')->group(function () {
-    Route::get('/', [DonationController::class, 'index']);
-    Route::get('/search', [DonationController::class, 'search']);
-    Route::get('/{id}', [DonationController::class, 'show']);
-});
-
-Route::prefix('donation-payments')->group(function () {
-    Route::get('/', [DonationPaymentController::class, 'index']);
-    Route::get('/search', [DonationPaymentController::class, 'search']);
-    Route::get('/{id}', [DonationPaymentController::class, 'show']);
-});
-
-Route::prefix('withdrawals')->group(function () {
-    Route::get('/', [WithdrawalController::class, 'index']);
-    Route::get('/search', [WithdrawalController::class, 'search']);
-    Route::get('/{id}', [WithdrawalController::class, 'show']);
+Route::prefix('tags')->group(function () {
+    Route::get('/', [TagController::class, 'index']);
+    Route::get('/search', [TagController::class, 'search']);
+    Route::get('/{id}', [TagController::class, 'show']);
 });
 
 Route::prefix('banners')->group(function () {
@@ -137,22 +108,10 @@ Route::prefix('banners')->group(function () {
     Route::get('/{id}', [BannerController::class, 'show']);
 });
 
-Route::prefix('banner-placements')->group(function () {
-    Route::get('/', [BannerPlacementController::class, 'index']);
-    Route::get('/search', [BannerPlacementController::class, 'search']);
-    Route::get('/{id}', [BannerPlacementController::class, 'show']);
-});
-
 Route::prefix('faqs')->group(function () {
     Route::get('/', [FaqController::class, 'index']);
     Route::get('/search', [FaqController::class, 'search']);
     Route::get('/{id}', [FaqController::class, 'show']);
-});
-
-Route::prefix('notifications')->group(function () {
-    Route::get('/', [NotificationController::class, 'index']);
-    Route::get('/search', [NotificationController::class, 'search']);
-    Route::get('/{id}', [NotificationController::class, 'show']);
 });
 
 Route::prefix('site-settings')->group(function () {
@@ -161,8 +120,24 @@ Route::prefix('site-settings')->group(function () {
     Route::get('/{id}', [SiteSettingController::class, 'show']);
 });
 
-Route::prefix('oauth-accounts')->group(function () {
-    Route::get('/', [OauthAccountController::class, 'index']);
-    Route::get('/search', [OauthAccountController::class, 'search']);
-    Route::get('/{id}', [OauthAccountController::class, 'show']);
-});
+// Generic Public Routes (List & Show only)
+$publicResources = [
+    'users' => UserController::class,
+    'admins' => AdminController::class,
+    'campaign-updates' => CampaignUpdateController::class,
+    'campaign-images' => CampaignImageController::class,
+    'donations' => DonationController::class,
+    'donation-payments' => DonationPaymentController::class,
+    'withdrawals' => WithdrawalController::class,
+    'banner-placements' => BannerPlacementController::class,
+    'notifications' => NotificationController::class,
+    'oauth-accounts' => OauthAccountController::class,
+];
+
+foreach ($publicResources as $prefix => $controller) {
+    Route::prefix($prefix)->group(function () use ($controller) {
+        Route::get('/', [$controller, 'index']);
+        Route::get('/search', [$controller, 'search']);
+        Route::get('/{id}', [$controller, 'show']);
+    });
+}

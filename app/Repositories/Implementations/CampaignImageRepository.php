@@ -27,10 +27,26 @@ class CampaignImageRepository implements CampaignImageRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function search(string $keyword, int $perPage): LengthAwarePaginator
+    public function createMany(int $campaignId, array $imagesData): void
     {
-        return CampaignImage::with('campaign')
-            ->where('image_url', 'like', "%{$keyword}%")
-            ->paginate($perPage);
+        foreach ($imagesData as $data) {
+            CampaignImage::create(array_merge(['campaign_id' => $campaignId], $data));
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteMany(array $imageIds): void
+    {
+        CampaignImage::whereIn('id', $imageIds)->delete();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteAllForCampaign(int $campaignId): void
+    {
+        CampaignImage::where('campaign_id', $campaignId)->delete();
     }
 }
