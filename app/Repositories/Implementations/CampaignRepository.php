@@ -34,4 +34,39 @@ class CampaignRepository implements CampaignRepositoryInterface
             ->orWhere('slug', 'like', "%{$keyword}%")
             ->paginate($perPage);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function create(array $data): Campaign
+    {
+        return Campaign::create($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(int $id, array $data): Campaign
+    {
+        $campaign = Campaign::findOrFail($id);
+        $campaign->update($data);
+        return $campaign;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(int $id): bool
+    {
+        $campaign = Campaign::findOrFail($id);
+        return $campaign->delete();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function syncTags(Campaign $campaign, array $tagIds): void
+    {
+        $campaign->tags()->sync($tagIds);
+    }
 }

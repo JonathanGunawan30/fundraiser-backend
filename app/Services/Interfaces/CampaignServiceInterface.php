@@ -31,4 +31,39 @@ interface CampaignServiceInterface
      * @return LengthAwarePaginator
      */
     public function searchCampaigns(string $keyword, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Create a new campaign.
+     *
+     * @param array $data
+     * @return Campaign
+     */
+    public function createCampaign(array $data): Campaign;
+
+    /**
+     * Update an existing campaign.
+     *
+     * @param int $id
+     * @param array $data
+     * @return Campaign
+     */
+    public function updateCampaign(int $id, array $data): Campaign;
+
+    /**
+     * Delete a campaign.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function deleteCampaign(int $id): bool;
+
+    /**
+     * Verify a campaign.
+     *
+     * @param int $id
+     * @param int $adminId
+     * @param string $status
+     * @return Campaign
+     */
+    public function verifyCampaign(int $id, int $adminId, string $status): Campaign;
 }
