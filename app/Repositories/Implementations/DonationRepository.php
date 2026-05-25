@@ -8,29 +8,30 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class DonationRepository implements DonationRepositoryInterface
 {
-    /**
-     * @inheritDoc
-     */
     public function getAllPaginated(int $perPage): LengthAwarePaginator
     {
-        return Donation::with(['campaign', 'user', 'payment'])->paginate($perPage);
+        return Donation::with(['user', 'campaign'])->paginate($perPage);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function findById(int $id): ?Donation
     {
-        return Donation::with(['campaign', 'user', 'payment'])->find($id);
+        return Donation::with(['user', 'campaign', 'payment'])->find($id);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function search(string $keyword, int $perPage): LengthAwarePaginator
+    public function findByNumber(string $number): ?Donation
     {
-        return Donation::with(['campaign', 'user', 'payment'])
-            ->where('donation_number', 'like', "%{$keyword}%")
-            ->paginate($perPage);
+        return Donation::with(['user', 'campaign', 'payment'])->where('donation_number', $number)->first();
+    }
+
+    public function create(array $data): Donation
+    {
+        return Donation::create($data);
+    }
+
+    public function update(int $id, array $data): Donation
+    {
+        $donation = Donation::findOrFail($id);
+        $donation->update($data);
+        return $donation;
     }
 }

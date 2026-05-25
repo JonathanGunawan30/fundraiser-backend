@@ -4,35 +4,23 @@ namespace App\Repositories\Implementations;
 
 use App\Models\DonationPayment;
 use App\Repositories\Interfaces\DonationPaymentRepositoryInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class DonationPaymentRepository implements DonationPaymentRepositoryInterface
 {
-    /**
-     * @inheritDoc
-     */
-    public function getAllPaginated(int $perPage): LengthAwarePaginator
+    public function create(array $data): DonationPayment
     {
-        return DonationPayment::with(['donation'])->paginate($perPage);
+        return DonationPayment::create($data);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function findById(int $id): ?DonationPayment
+    public function updateByDonationId(int $donationId, array $data): DonationPayment
     {
-        return DonationPayment::with(['donation'])->find($id);
+        $payment = DonationPayment::where('donation_id', $donationId)->firstOrFail();
+        $payment->update($data);
+        return $payment;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function search(string $keyword, int $perPage): LengthAwarePaginator
+    public function findByExternalRef(string $ref): ?DonationPayment
     {
-        return DonationPayment::with(['donation'])
-            ->where('external_ref', 'like', "%{$keyword}%")
-            ->orWhere('payment_method', 'like', "%{$keyword}%")
-            ->orWhere('payment_channel', 'like', "%{$keyword}%")
-            ->paginate($perPage);
+        return DonationPayment::where('external_ref', $ref)->first();
     }
 }

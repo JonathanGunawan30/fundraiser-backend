@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Donation extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'donation_number',
         'campaign_id',
@@ -16,6 +19,7 @@ class Donation extends Model
         'message',
         'is_anonymous',
         'status',
+        'invoice_url',
     ];
 
     protected $casts = [

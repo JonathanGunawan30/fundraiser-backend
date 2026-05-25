@@ -17,6 +17,7 @@ class DonationPayment extends Model
         'net_amount',
         'status',
         'payment_url',
+        'snap_token',
         'raw_response',
         'paid_at',
         'expired_at',
