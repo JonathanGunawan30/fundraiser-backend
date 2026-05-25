@@ -89,6 +89,52 @@ return [
             ],
         ],
 
+        'rabbitmq' => [
+            'driver' => 'rabbitmq',
+            'queue' => env('RABBITMQ_QUEUE', 'default'),
+            'connection' => PhpAmqpLib\Connection\AMQPLazyConnection::class,
+            'hosts' => [
+                [
+                    'host' => env('RABBITMQ_HOST', '127.0.0.1'),
+                    'port' => env('RABBITMQ_PORT', 5672),
+                    'user' => env('RABBITMQ_USER', 'guest'),
+                    'password' => env('RABBITMQ_PASSWORD', 'guest'),
+                    'vhost' => env('RABBITMQ_VHOST', '/'),
+                ],
+            ],
+            'options' => [
+                'ssl_options' => [
+                    'cafile' => env('RABBITMQ_SSL_CAFILE'),
+                    'local_cert' => env('RABBITMQ_SSL_LOCALCERT'),
+                    'local_key' => env('RABBITMQ_SSL_LOCALKEY'),
+                    'verify_peer' => env('RABBITMQ_SSL_VERIFY_PEER', true),
+                    'passphrase' => env('RABBITMQ_SSL_PASSPHRASE'),
+                ],
+                'queue' => [
+                    'declare' => env('RABBITMQ_QUEUE_DECLARE', true),
+                    'bind' => env('RABBITMQ_QUEUE_BIND', true),
+                    'passive' => env('RABBITMQ_QUEUE_PASSIVE', false),
+                    'durable' => env('RABBITMQ_QUEUE_DURABLE', true),
+                    'exclusive' => env('RABBITMQ_QUEUE_EXCLUSIVE', false),
+                    'auto_delete' => env('RABBITMQ_QUEUE_AUTODELETE', false),
+                    'arguments' => env('RABBITMQ_QUEUE_ARGUMENTS'),
+                ],
+                'exchange' => [
+                    'declare' => env('RABBITMQ_EXCHANGE_DECLARE', true),
+                    'type' => env('RABBITMQ_EXCHANGE_TYPE', \PhpAmqpLib\Exchange\AMQPExchangeType::DIRECT),
+                    'passive' => env('RABBITMQ_EXCHANGE_PASSIVE', false),
+                    'durable' => env('RABBITMQ_EXCHANGE_DURABLE', true),
+                    'auto_delete' => env('RABBITMQ_EXCHANGE_AUTODELETE', false),
+                    'arguments' => env('RABBITMQ_EXCHANGE_ARGUMENTS'),
+                ],
+                'reroute_failed' => env('RABBITMQ_REROUTE_FAILED', false),
+                'failed_exchange' => env('RABBITMQ_FAILED_EXCHANGE'),
+                'failed_routing_key' => env('RABBITMQ_FAILED_ROUTING_KEY'),
+            ],
+            'worker' => env('RABBITMQ_WORKER', 'default'),
+            'after_commit' => false,
+        ],
+
     ],
 
     /*

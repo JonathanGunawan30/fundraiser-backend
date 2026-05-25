@@ -1,7 +1,7 @@
 FROM dunglas/frankenphp
 
 RUN install-php-extensions \
-    pdo_mysql mbstring exif pcntl bcmath gd opcache zip
+    pdo_mysql mbstring exif pcntl bcmath gd opcache zip redis amqp sockets
 
 RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \
     && echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/opcache.ini \

@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\SiteSettingController;
 use App\Http\Controllers\Api\OauthAccountController;
 use App\Http\Controllers\Api\CampaignCategoryController;
+use App\Http\Controllers\Api\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 // Prevent redirection hangs on unauthenticated API requests
@@ -27,6 +28,9 @@ Route::get('/login', function () {
         'errors' => null,
     ], 401);
 })->name('login');
+
+// Webhooks (Public)
+Route::post('webhooks/midtrans', [WebhookController::class, 'handleMidtrans'])->name('webhooks.midtrans');
 
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'adminLogin']);
@@ -88,6 +92,12 @@ Route::middleware('auth:api')->prefix('auth')->group(function () {
         Route::put('/{campaign_update}', [CampaignUpdateController::class, 'update']);
         Route::delete('/{campaign_update}', [CampaignUpdateController::class, 'destroy']);
     });
+
+    // Donations (User Actions)
+    Route::prefix('donations')->group(function () {
+        Route::post('/', [DonationController::class, 'store']);
+        Route::get('/{number}', [DonationController::class, 'show']);
+    });
 });
 
 // Public Routes
@@ -133,24 +143,8 @@ Route::prefix('site-settings')->group(function () {
     Route::get('/{id}', [SiteSettingController::class, 'show']);
 });
 
-// Generic Public Routes (List & Show only)
-$publicResources = [
-    'users' => UserController::class,
-    'admins' => AdminController::class,
-    'campaign-updates' => CampaignUpdateController::class,
-    'campaign-images' => CampaignImageController::class,
-    'donations' => DonationController::class,
-    'donation-payments' => DonationPaymentController::class,
-    'withdrawals' => WithdrawalController::class,
-    'banner-placements' => BannerPlacementController::class,
-    'notifications' => NotificationController::class,
-    'oauth-accounts' => OauthAccountController::class,
-];
-
-foreach ($publicResources as $prefix => $controller) {
-    Route::prefix($prefix)->group(function () use ($controller) {
-        Route::get('/', [$controller, 'index']);
-        Route::get('/search', [$controller, 'search']);
-        Route::get('/{id}', [$controller, 'show']);
-    });
-}
+Route::prefix('users')->group(function () {
+    Route::get('/', [UserController::class, 'index']);
+    Route::get('/search', [UserController::class, 'search']);
+    Route::get('/{id}', [UserController::class, 'show']);
+});
