@@ -100,6 +100,11 @@ class ServiceServiceProvider extends ServiceProvider
             \App\Services\Interfaces\DashboardServiceInterface::class,
             \App\Services\Implementations\DashboardService::class
         );
+
+        $this->app->bind(
+            \App\Services\Interfaces\AuditLogServiceInterface::class,
+            \App\Services\Implementations\AuditLogService::class
+        );
     }
 
     /**

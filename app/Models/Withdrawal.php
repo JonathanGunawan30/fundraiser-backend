@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Withdrawal extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'campaign_id',
         'user_id',
@@ -15,11 +19,19 @@ class Withdrawal extends Model
         'account_number',
         'account_name',
         'status',
-        'processed_by',
         'rejection_reason',
         'transfer_proof_url',
+        'processed_by',
         'processed_at',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['amount', 'status', 'processed_by'])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
 
     protected $casts = [
         'amount' => 'integer',
