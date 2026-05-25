@@ -100,6 +100,11 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\Interfaces\StatRepositoryInterface::class,
             \App\Repositories\Implementations\StatRepository::class
         );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\AuditLogRepositoryInterface::class,
+            \App\Repositories\Implementations\AuditLogRepository::class
+        );
     }
 
     /**

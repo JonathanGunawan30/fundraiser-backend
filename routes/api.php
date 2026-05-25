@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\OauthAccountController;
 use App\Http\Controllers\Api\CampaignCategoryController;
 use App\Http\Controllers\Api\WebhookController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\AuditLogController;
 use Illuminate\Support\Facades\Route;
 
 // Prevent redirection hangs on unauthenticated API requests
@@ -39,6 +40,12 @@ Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
 
     // Dashboard
     Route::get('dashboard', [DashboardController::class, 'adminIndex']);
+
+    // Audit Logs
+    Route::prefix('audit-logs')->group(function () {
+        Route::get('/', [AuditLogController::class, 'index']);
+        Route::get('/{id}', [AuditLogController::class, 'show']);
+    });
 
     // FAQs
     Route::prefix('faqs')->group(function () {
@@ -120,6 +127,7 @@ Route::prefix('auth')->group(function () {
 
         // Notifications
         Route::prefix('notifications')->group(function () {
+            // Re-bind standard Laravel notifications relationship is automatic with Notifiable trait
             Route::get('/', [NotificationController::class, 'index']);
             Route::get('/unread', [NotificationController::class, 'unread']);
             Route::patch('/{id}/read', [NotificationController::class, 'markAsRead']);
