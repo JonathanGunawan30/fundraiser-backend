@@ -66,7 +66,7 @@ class FaqControllerTest extends TestCase
         });
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->postJson('/api/auth/faqs', $faqData);
+            ->postJson('/api/admin/faqs', $faqData);
 
         $response->assertStatus(201)
             ->assertJson([
@@ -91,7 +91,7 @@ class FaqControllerTest extends TestCase
         });
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->putJson('/api/auth/faqs/1', $faqData);
+            ->putJson('/api/admin/faqs/1', $faqData);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -113,7 +113,7 @@ class FaqControllerTest extends TestCase
         });
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->deleteJson('/api/auth/faqs/1');
+            ->deleteJson('/api/admin/faqs/1');
 
         $response->assertStatus(200)
             ->assertJson([

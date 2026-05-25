@@ -67,7 +67,7 @@ class CampaignCategoryControllerTest extends TestCase
         });
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->postJson('/api/auth/campaign-categories', [
+            ->postJson('/api/admin/campaign-categories', [
                 'name' => 'Education',
                 'slug' => 'education'
             ]);

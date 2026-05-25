@@ -48,7 +48,7 @@ class BannerTest extends TestCase
         ];
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->postJson('/api/auth/banners', $data);
+            ->postJson('/api/admin/banners', $data);
 
         $response->assertStatus(201);
         
@@ -82,7 +82,7 @@ class BannerTest extends TestCase
         ];
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->putJson("/api/auth/banners/{$banner->id}", $data);
+            ->putJson("/api/admin/banners/{$banner->id}", $data);
 
         $response->assertStatus(200);
         
@@ -113,7 +113,7 @@ class BannerTest extends TestCase
         ]);
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->deleteJson("/api/auth/banners/{$banner->id}");
+            ->deleteJson("/api/admin/banners/{$banner->id}");
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('banners', ['id' => $banner->id]);

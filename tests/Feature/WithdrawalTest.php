@@ -91,7 +91,7 @@ class WithdrawalTest extends TestCase
         $file = UploadedFile::fake()->image('proof.jpg');
         
         $response = $this->actingAs($admin, 'admin-api')
-            ->postJson("/api/auth/withdrawals/{$withdrawal->id}/process", [
+            ->postJson("/api/admin/withdrawals/{$withdrawal->id}/process", [
                 'status' => 'completed',
                 'transfer_proof' => $file
             ]);
@@ -129,7 +129,7 @@ class WithdrawalTest extends TestCase
         ]);
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->postJson("/api/auth/withdrawals/{$withdrawal->id}/process", [
+            ->postJson("/api/admin/withdrawals/{$withdrawal->id}/process", [
                 'status' => 'rejected',
                 'rejection_reason' => 'Data bank tidak valid'
             ]);

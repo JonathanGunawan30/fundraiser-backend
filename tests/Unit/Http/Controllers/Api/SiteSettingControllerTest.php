@@ -47,7 +47,7 @@ class SiteSettingControllerTest extends TestCase
         });
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->postJson('/api/auth/site-settings', [
+            ->postJson('/api/admin/site-settings', [
                 'key' => 'site_name',
                 'value' => 'Fundraiser',
                 'type' => 'string'

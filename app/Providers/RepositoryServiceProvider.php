@@ -95,6 +95,11 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\Interfaces\OauthAccountRepositoryInterface::class,
             \App\Repositories\Implementations\OauthAccountRepository::class
         );
+
+        $this->app->bind(
+            \App\Repositories\Interfaces\StatRepositoryInterface::class,
+            \App\Repositories\Implementations\StatRepository::class
+        );
     }
 
     /**
