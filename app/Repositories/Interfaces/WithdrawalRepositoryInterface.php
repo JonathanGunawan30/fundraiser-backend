@@ -31,4 +31,21 @@ interface WithdrawalRepositoryInterface
      * @return LengthAwarePaginator
      */
     public function search(string $keyword, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Create a new withdrawal.
+     *
+     * @param array $data
+     * @return Withdrawal
+     */
+    public function create(array $data): Withdrawal;
+
+    /**
+     * Update an existing withdrawal.
+     *
+     * @param int $id
+     * @param array $data
+     * @return Withdrawal
+     */
+    public function update(int $id, array $data): Withdrawal;
 }
