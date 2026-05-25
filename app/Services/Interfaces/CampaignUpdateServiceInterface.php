@@ -31,4 +31,31 @@ interface CampaignUpdateServiceInterface
      * @return LengthAwarePaginator
      */
     public function searchUpdates(string $keyword, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Create a new campaign update.
+     *
+     * @param array $data
+     * @return CampaignUpdate
+     */
+    public function createUpdate(array $data): CampaignUpdate;
+
+    /**
+     * Update an existing campaign update.
+     *
+     * @param int $id
+     * @param int $userId
+     * @param array $data
+     * @return CampaignUpdate
+     */
+    public function updateUpdate(int $id, int $userId, array $data): CampaignUpdate;
+
+    /**
+     * Delete a campaign update.
+     *
+     * @param int $id
+     * @param int $userId
+     * @return bool
+     */
+    public function deleteUpdate(int $id, int $userId): bool;
 }

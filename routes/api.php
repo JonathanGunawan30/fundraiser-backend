@@ -81,6 +81,13 @@ Route::middleware('auth:api')->prefix('auth')->group(function () {
         Route::put('/{campaign}', [CampaignController::class, 'update']);
         Route::delete('/{campaign}', [CampaignController::class, 'destroy']);
     });
+
+    // Campaign Updates (User Actions)
+    Route::prefix('campaign-updates')->group(function () {
+        Route::post('/', [CampaignUpdateController::class, 'store']);
+        Route::put('/{campaign_update}', [CampaignUpdateController::class, 'update']);
+        Route::delete('/{campaign_update}', [CampaignUpdateController::class, 'destroy']);
+    });
 });
 
 // Public Routes
@@ -94,6 +101,12 @@ Route::prefix('campaigns')->group(function () {
     Route::get('/', [CampaignController::class, 'index']);
     Route::get('/search', [CampaignController::class, 'search']);
     Route::get('/{id}', [CampaignController::class, 'show']);
+});
+
+Route::prefix('campaign-updates')->group(function () {
+    Route::get('/', [CampaignUpdateController::class, 'index']);
+    Route::get('/search', [CampaignUpdateController::class, 'search']);
+    Route::get('/{id}', [CampaignUpdateController::class, 'show']);
 });
 
 Route::prefix('tags')->group(function () {

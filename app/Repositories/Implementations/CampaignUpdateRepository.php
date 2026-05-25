@@ -33,4 +33,31 @@ class CampaignUpdateRepository implements CampaignUpdateRepositoryInterface
             ->where('title', 'like', "%{$keyword}%")
             ->paginate($perPage);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function create(array $data): CampaignUpdate
+    {
+        return CampaignUpdate::create($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(int $id, array $data): CampaignUpdate
+    {
+        $update = CampaignUpdate::findOrFail($id);
+        $update->update($data);
+        return $update;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(int $id): bool
+    {
+        $update = CampaignUpdate::findOrFail($id);
+        return $update->delete();
+    }
 }
