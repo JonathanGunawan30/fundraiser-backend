@@ -90,6 +90,9 @@ Route::prefix('auth')->group(function () {
         // Dashboard
         Route::get('dashboard', [DashboardController::class, 'userIndex']);
 
+        // Profile
+        Route::patch('profile', [UserController::class, 'update']);
+
         // Campaigns
         Route::prefix('campaigns')->group(function () {
             Route::post('/', [CampaignController::class, 'store']);

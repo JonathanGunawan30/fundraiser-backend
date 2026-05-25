@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\UpdateProfileRequest;
 use App\Services\Interfaces\UserServiceInterface;
+use App\Http\Resources\UserResource;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -48,6 +51,28 @@ class UserController extends Controller
             return $this->success($user, 'User retrieved successfully');
         } catch (ModelNotFoundException $e) {
             return $this->error($e->getMessage(), 404);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Search for resources.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $keyword = $request->query('keyword', '');
+        $perPage = $request->query('per_page', 10);
+        
+        $users = $this->userService->searchUsers($keyword, $perPage);
+
+        return $this->successWithPagination($users, 'Users search results retrieved successfully');
+    }
+}
+        return $this->success(new UserResource($user), 'Profile updated successfully');
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }

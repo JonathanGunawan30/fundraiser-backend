@@ -31,4 +31,13 @@ interface UserServiceInterface
      * @return LengthAwarePaginator
      */
     public function searchUsers(string $keyword, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Update user profile.
+     *
+     * @param int $id
+     * @param array $data
+     * @return User
+     */
+    public function updateProfile(int $id, array $data): User;
 }

@@ -33,4 +33,14 @@ class UserRepository implements UserRepositoryInterface
             ->orWhere('email', 'like', "%{$keyword}%")
             ->paginate($perPage);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(int $id, array $data): User
+    {
+        $user = User::findOrFail($id);
+        $user->update($data);
+        return $user;
+    }
 }

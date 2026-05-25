@@ -31,4 +31,13 @@ interface UserRepositoryInterface
      * @return LengthAwarePaginator
      */
     public function search(string $keyword, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Update user.
+     *
+     * @param int $id
+     * @param array $data
+     * @return User
+     */
+    public function update(int $id, array $data): User;
 }
