@@ -75,6 +75,9 @@ Route::prefix('auth')->group(function () {
 
         // Campaign Verifications
         Route::post('campaigns/{id}/verify', [CampaignController::class, 'verify']);
+
+        // Withdrawal Processing
+        Route::post('withdrawals/{id}/process', [WithdrawalController::class, 'process']);
     });
 });
 
@@ -97,6 +100,11 @@ Route::middleware('auth:api')->prefix('auth')->group(function () {
     Route::prefix('donations')->group(function () {
         Route::post('/', [DonationController::class, 'store']);
         Route::get('/{number}', [DonationController::class, 'show']);
+    });
+
+    // Withdrawals (User Actions)
+    Route::prefix('withdrawals')->group(function () {
+        Route::post('/', [WithdrawalController::class, 'store']);
     });
 });
 
@@ -147,4 +155,10 @@ Route::prefix('users')->group(function () {
     Route::get('/', [UserController::class, 'index']);
     Route::get('/search', [UserController::class, 'search']);
     Route::get('/{id}', [UserController::class, 'show']);
+});
+
+Route::prefix('withdrawals')->group(function () {
+    Route::get('/', [WithdrawalController::class, 'index']);
+    Route::get('/search', [WithdrawalController::class, 'search']);
+    Route::get('/{id}', [WithdrawalController::class, 'show']);
 });

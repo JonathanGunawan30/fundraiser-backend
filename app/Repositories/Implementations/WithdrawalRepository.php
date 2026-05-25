@@ -35,4 +35,22 @@ class WithdrawalRepository implements WithdrawalRepositoryInterface
             ->orWhere('account_name', 'like', "%{$keyword}%")
             ->paginate($perPage);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function create(array $data): Withdrawal
+    {
+        return Withdrawal::create($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(int $id, array $data): Withdrawal
+    {
+        $withdrawal = Withdrawal::findOrFail($id);
+        $withdrawal->update($data);
+        return $withdrawal;
+    }
 }

@@ -22,6 +22,7 @@ class Campaign extends Model
         'cover_image_url',
         'goal_amount',
         'collected_amount',
+        'withdrawn_amount',
         'donor_count',
         'deadline',
         'status',
