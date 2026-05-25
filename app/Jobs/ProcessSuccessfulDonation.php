@@ -61,6 +61,11 @@ class ProcessSuccessfulDonation implements ShouldQueue
                 Mail::to($donation->user->email)->send(new DonationReceiptMail($donation, $pdfContent));
             }
 
+            // 6. Notify Campaign Creator
+            if ($campaign->user) {
+                $campaign->user->notify(new \App\Notifications\DonationReceivedNotification($donation));
+            }
+
             Log::info("ProcessSuccessfulDonation: Campaign {$campaign->id} updated and invoice sent for donation {$donation->id}.");
         });
     }

@@ -96,7 +96,7 @@ class CampaignUpdateController extends Controller
 
             return $this->success(new CampaignUpdateResource($update), 'Campaign update updated successfully');
         } catch (\RuntimeException $e) {
-            return $this->error($e->getMessage(), $e->getCode() ?: 403);
+            return $this->error($e->getMessage(), 403);
         } catch (ModelNotFoundException $e) {
             return $this->error("Campaign update with ID {$id} not found.", 404);
         } catch (\Exception $e) {
@@ -116,7 +116,7 @@ class CampaignUpdateController extends Controller
             $this->updateService->deleteUpdate($id, Auth::id());
             return $this->success(null, 'Campaign update deleted successfully');
         } catch (\RuntimeException $e) {
-            return $this->error($e->getMessage(), $e->getCode() ?: 403);
+            return $this->error($e->getMessage(), 403);
         } catch (ModelNotFoundException $e) {
             return $this->error("Campaign update with ID {$id} not found.", 404);
         } catch (\Exception $e) {

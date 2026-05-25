@@ -106,6 +106,14 @@ Route::middleware('auth:api')->prefix('auth')->group(function () {
     Route::prefix('withdrawals')->group(function () {
         Route::post('/', [WithdrawalController::class, 'store']);
     });
+
+    // Notifications (User Actions)
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [NotificationController::class, 'index']);
+        Route::get('/unread', [NotificationController::class, 'unread']);
+        Route::patch('/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::post('/read-all', [NotificationController::class, 'markAllAsRead']);
+    });
 });
 
 // Public Routes

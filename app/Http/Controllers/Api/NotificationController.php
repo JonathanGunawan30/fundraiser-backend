@@ -3,68 +3,66 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\Interfaces\NotificationServiceInterface;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
     use ApiResponse;
 
-    protected NotificationServiceInterface $notificationService;
-
-    public function __construct(NotificationServiceInterface $notificationService)
-    {
-        $this->notificationService = $notificationService;
-    }
-
     /**
-     * Display a listing of the resource.
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * Display a listing of the user's notifications.
      */
     public function index(Request $request): JsonResponse
     {
+        $user = Auth::user();
         $perPage = $request->query('per_page', 10);
-        $notifications = $this->notificationService->getAllNotifications($perPage);
+        
+        $notifications = $user->notifications()->paginate($perPage);
 
         return $this->successWithPagination($notifications, 'Notifications retrieved successfully');
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return JsonResponse
+     * Display a listing of unread notifications.
      */
-    public function show(int $id): JsonResponse
+    public function unread(Request $request): JsonResponse
     {
-        try {
-            $notification = $this->notificationService->getNotificationById($id);
-            return $this->success($notification, 'Notification retrieved successfully');
-        } catch (ModelNotFoundException $e) {
-            return $this->error($e->getMessage(), 404);
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 500);
-        }
+        $user = Auth::user();
+        $perPage = $request->query('per_page', 10);
+        
+        $notifications = $user->unreadNotifications()->paginate($perPage);
+
+        return $this->successWithPagination($notifications, 'Unread notifications retrieved successfully');
     }
 
     /**
-     * Search for resources.
-     *
-     * @param Request $request
-     * @return JsonResponse
+     * Mark a specific notification as read.
      */
-    public function search(Request $request): JsonResponse
+    public function markAsRead(string $id): JsonResponse
     {
-        $keyword = $request->query('keyword', '');
-        $perPage = $request->query('per_page', 10);
-        
-        $notifications = $this->notificationService->searchNotifications($keyword, $perPage);
+        $user = Auth::user();
+        $notification = $user->notifications()->where('id', $id)->first();
 
-        return $this->successWithPagination($notifications, 'Notifications search results retrieved successfully');
+        if (!$notification) {
+            return $this->error('Notification not found.', 404);
+        }
+
+        $notification->markAsRead();
+
+        return $this->success(null, 'Notification marked as read');
+    }
+
+    /**
+     * Mark all notifications as read.
+     */
+    public function markAllAsRead(): JsonResponse
+    {
+        $user = Auth::user();
+        $user->unreadNotifications->markAsRead();
+
+        return $this->success(null, 'All notifications marked as read');
     }
 }

@@ -118,7 +118,13 @@ class WithdrawalService implements WithdrawalServiceInterface
                 $data['processed_at'] = now();
             }
 
-            return $this->withdrawalRepository->update($id, $data);
+            $updatedWithdrawal = $this->withdrawalRepository->update($id, $data);
+
+            if ($updatedWithdrawal->user) {
+                $updatedWithdrawal->user->notify(new \App\Notifications\WithdrawalProcessedNotification($updatedWithdrawal));
+            }
+
+            return $updatedWithdrawal;
         });
     }
 

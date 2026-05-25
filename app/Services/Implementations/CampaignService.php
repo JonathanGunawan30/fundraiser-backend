@@ -175,12 +175,18 @@ class CampaignService implements CampaignServiceInterface
      */
     public function verifyCampaign(int $id, int $adminId, string $status): Campaign
     {
-        return $this->campaignRepository->update($id, [
+        $campaign = $this->campaignRepository->update($id, [
             'verified_status' => $status,
             'verified_by' => $adminId,
             'verified_at' => now(),
             'status' => $status === 'approved' ? 'active' : 'suspended'
         ]);
+
+        if ($campaign->user) {
+            $campaign->user->notify(new \App\Notifications\CampaignVerifiedNotification($campaign));
+        }
+
+        return $campaign;
     }
 
     /**

@@ -98,7 +98,7 @@ class WithdrawalController extends Controller
 
             return $this->success(new WithdrawalResource($withdrawal), "Withdrawal request updated to {$request->status}");
         } catch (\RuntimeException $e) {
-            return $this->error($e->getMessage(), $e->getCode() ?: 400);
+            return $this->error($e->getMessage(), 400);
         } catch (ModelNotFoundException $e) {
             return $this->error("Withdrawal with ID {$id} not found.", 404);
         } catch (\Exception $e) {
