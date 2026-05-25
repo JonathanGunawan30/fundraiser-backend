@@ -75,7 +75,7 @@ class CampaignTest extends TestCase
         $campaign = Campaign::factory()->create(['verified_status' => 'pending', 'user_id' => $user->id]);
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->postJson("/api/auth/campaigns/{$campaign->id}/verify", [
+            ->postJson("/api/admin/campaigns/{$campaign->id}/verify", [
                 'status' => 'approved'
             ]);
 

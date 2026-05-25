@@ -95,6 +95,11 @@ class ServiceServiceProvider extends ServiceProvider
             \App\Services\Interfaces\OauthAccountServiceInterface::class,
             \App\Services\Implementations\OauthAccountService::class
         );
+
+        $this->app->bind(
+            \App\Services\Interfaces\DashboardServiceInterface::class,
+            \App\Services\Implementations\DashboardService::class
+        );
     }
 
     /**

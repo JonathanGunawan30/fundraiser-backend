@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\SiteSettingController;
 use App\Http\Controllers\Api\OauthAccountController;
 use App\Http\Controllers\Api\CampaignCategoryController;
 use App\Http\Controllers\Api\WebhookController;
+use App\Http\Controllers\Api\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 // Prevent redirection hangs on unauthenticated API requests
@@ -32,87 +33,95 @@ Route::get('/login', function () {
 // Webhooks (Public)
 Route::post('webhooks/midtrans', [WebhookController::class, 'handleMidtrans'])->name('webhooks.midtrans');
 
-Route::prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'adminLogin']);
+// Admin Routes
+Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
+    Route::post('logout', [AuthController::class, 'logout']);
 
-    Route::middleware('auth:admin-api')->group(function () {
-        Route::post('logout', [AuthController::class, 'logout']);
+    // Dashboard
+    Route::get('dashboard', [DashboardController::class, 'adminIndex']);
 
-        // FAQs
-        Route::prefix('faqs')->group(function () {
-            Route::post('/', [FaqController::class, 'store']);
-            Route::put('/{id}', [FaqController::class, 'update']);
-            Route::delete('/{id}', [FaqController::class, 'destroy']);
-        });
-
-        // Tags
-        Route::prefix('tags')->group(function () {
-            Route::post('/', [TagController::class, 'store']);
-            Route::put('/{tag}', [TagController::class, 'update']);
-            Route::delete('/{tag}', [TagController::class, 'destroy']);
-        });
-
-        // Banners
-        Route::prefix('banners')->group(function () {
-            Route::post('/', [BannerController::class, 'store']);
-            Route::put('/{banner}', [BannerController::class, 'update']);
-            Route::delete('/{banner}', [BannerController::class, 'destroy']);
-        });
-
-        // Campaign Categories
-        Route::prefix('campaign-categories')->group(function () {
-            Route::post('/', [CampaignCategoryController::class, 'store']);
-            Route::put('/{campaign_category}', [CampaignCategoryController::class, 'update']);
-            Route::delete('/{campaign_category}', [CampaignCategoryController::class, 'destroy']);
-        });
-
-        // Site Settings
-        Route::prefix('site-settings')->group(function () {
-            Route::post('/', [SiteSettingController::class, 'store']);
-            Route::put('/{site_setting}', [SiteSettingController::class, 'update']);
-            Route::delete('/{site_setting}', [SiteSettingController::class, 'destroy']);
-        });
-
-        // Campaign Verifications
-        Route::post('campaigns/{id}/verify', [CampaignController::class, 'verify']);
-
-        // Withdrawal Processing
-        Route::post('withdrawals/{id}/process', [WithdrawalController::class, 'process']);
+    // FAQs
+    Route::prefix('faqs')->group(function () {
+        Route::post('/', [FaqController::class, 'store']);
+        Route::put('/{id}', [FaqController::class, 'update']);
+        Route::delete('/{id}', [FaqController::class, 'destroy']);
     });
+
+    // Tags
+    Route::prefix('tags')->group(function () {
+        Route::post('/', [TagController::class, 'store']);
+        Route::put('/{tag}', [TagController::class, 'update']);
+        Route::delete('/{tag}', [TagController::class, 'destroy']);
+    });
+
+    // Banners
+    Route::prefix('banners')->group(function () {
+        Route::post('/', [BannerController::class, 'store']);
+        Route::put('/{banner}', [BannerController::class, 'update']);
+        Route::delete('/{banner}', [BannerController::class, 'destroy']);
+    });
+
+    // Campaign Categories
+    Route::prefix('campaign-categories')->group(function () {
+        Route::post('/', [CampaignCategoryController::class, 'store']);
+        Route::put('/{campaign_category}', [CampaignCategoryController::class, 'update']);
+        Route::delete('/{campaign_category}', [CampaignCategoryController::class, 'destroy']);
+    });
+
+    // Site Settings
+    Route::prefix('site-settings')->group(function () {
+        Route::post('/', [SiteSettingController::class, 'store']);
+        Route::put('/{site_setting}', [SiteSettingController::class, 'update']);
+        Route::delete('/{site_setting}', [SiteSettingController::class, 'destroy']);
+    });
+
+    // Campaign Verifications
+    Route::post('campaigns/{id}/verify', [CampaignController::class, 'verify']);
+
+    // Withdrawal Processing
+    Route::post('withdrawals/{id}/process', [WithdrawalController::class, 'process']);
 });
 
-Route::middleware('auth:api')->prefix('auth')->group(function () {
-    // Campaigns (User Actions)
-    Route::prefix('campaigns')->group(function () {
-        Route::post('/', [CampaignController::class, 'store']);
-        Route::put('/{campaign}', [CampaignController::class, 'update']);
-        Route::delete('/{campaign}', [CampaignController::class, 'destroy']);
-    });
+// User Auth Routes
+Route::prefix('auth')->group(function () {
+    Route::post('login', [AuthController::class, 'adminLogin']); // Legacy/Admin login
 
-    // Campaign Updates (User Actions)
-    Route::prefix('campaign-updates')->group(function () {
-        Route::post('/', [CampaignUpdateController::class, 'store']);
-        Route::put('/{campaign_update}', [CampaignUpdateController::class, 'update']);
-        Route::delete('/{campaign_update}', [CampaignUpdateController::class, 'destroy']);
-    });
+    Route::middleware('auth:api')->group(function () {
+        // Dashboard
+        Route::get('dashboard', [DashboardController::class, 'userIndex']);
 
-    // Donations (User Actions)
-    Route::prefix('donations')->group(function () {
-        Route::post('/', [DonationController::class, 'store']);
-        Route::get('/{number}', [DonationController::class, 'show']);
-    });
+        // Campaigns
+        Route::prefix('campaigns')->group(function () {
+            Route::post('/', [CampaignController::class, 'store']);
+            Route::put('/{campaign}', [CampaignController::class, 'update']);
+            Route::delete('/{campaign}', [CampaignController::class, 'destroy']);
+        });
 
-    // Withdrawals (User Actions)
-    Route::prefix('withdrawals')->group(function () {
-        Route::post('/', [WithdrawalController::class, 'store']);
-    });
+        // Campaign Updates
+        Route::prefix('campaign-updates')->group(function () {
+            Route::post('/', [CampaignUpdateController::class, 'store']);
+            Route::put('/{campaign_update}', [CampaignUpdateController::class, 'update']);
+            Route::delete('/{campaign_update}', [CampaignUpdateController::class, 'destroy']);
+        });
 
-    // Notifications (User Actions)
-    Route::prefix('notifications')->group(function () {
-        Route::get('/', [NotificationController::class, 'index']);
-        Route::get('/unread', [NotificationController::class, 'unread']);
-        Route::patch('/{id}/read', [NotificationController::class, 'markAsRead']);
-        Route::post('/read-all', [NotificationController::class, 'markAllAsRead']);
+        // Donations
+        Route::prefix('donations')->group(function () {
+            Route::post('/', [DonationController::class, 'store']);
+            Route::get('/{number}', [DonationController::class, 'show']);
+        });
+
+        // Withdrawals
+        Route::prefix('withdrawals')->group(function () {
+            Route::post('/', [WithdrawalController::class, 'store']);
+        });
+
+        // Notifications
+        Route::prefix('notifications')->group(function () {
+            Route::get('/', [NotificationController::class, 'index']);
+            Route::get('/unread', [NotificationController::class, 'unread']);
+            Route::patch('/{id}/read', [NotificationController::class, 'markAsRead']);
+            Route::post('/read-all', [NotificationController::class, 'markAllAsRead']);
+        });
     });
 });
 

@@ -45,7 +45,7 @@ class CampaignCategoryTest extends TestCase
         ];
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->postJson('/api/auth/campaign-categories', $data);
+            ->postJson('/api/admin/campaign-categories', $data);
 
         $response->assertStatus(201);
         
@@ -76,7 +76,7 @@ class CampaignCategoryTest extends TestCase
         ];
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->putJson("/api/auth/campaign-categories/{$category->id}", $data);
+            ->putJson("/api/admin/campaign-categories/{$category->id}", $data);
 
         $response->assertStatus(200);
         
@@ -106,7 +106,7 @@ class CampaignCategoryTest extends TestCase
         ]);
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->deleteJson("/api/auth/campaign-categories/{$category->id}");
+            ->deleteJson("/api/admin/campaign-categories/{$category->id}");
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('campaign_categories', ['id' => $category->id]);

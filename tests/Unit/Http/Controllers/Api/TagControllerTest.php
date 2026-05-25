@@ -71,7 +71,7 @@ class TagControllerTest extends TestCase
         });
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->postJson('/api/auth/tags', $tagData);
+            ->postJson('/api/admin/tags', $tagData);
 
         $response->assertStatus(201)
             ->assertJson([
@@ -96,7 +96,7 @@ class TagControllerTest extends TestCase
         });
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->putJson('/api/auth/tags/1', $tagData);
+            ->putJson('/api/admin/tags/1', $tagData);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -118,7 +118,7 @@ class TagControllerTest extends TestCase
         });
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->deleteJson('/api/auth/tags/1');
+            ->deleteJson('/api/admin/tags/1');
 
         $response->assertStatus(200)
             ->assertJson([

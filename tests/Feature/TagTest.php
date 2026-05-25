@@ -61,7 +61,7 @@ class TagTest extends TestCase
         ];
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->postJson('/api/auth/tags', $data);
+            ->postJson('/api/admin/tags', $data);
 
         $response->assertStatus(201)
             ->assertJson([
@@ -93,7 +93,7 @@ class TagTest extends TestCase
         ];
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->putJson("/api/auth/tags/{$tag->id}", $data);
+            ->putJson("/api/admin/tags/{$tag->id}", $data);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -117,7 +117,7 @@ class TagTest extends TestCase
         $tag = Tag::factory()->create();
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->deleteJson("/api/auth/tags/{$tag->id}");
+            ->deleteJson("/api/admin/tags/{$tag->id}");
 
         $response->assertStatus(200)
             ->assertJson([
@@ -134,7 +134,7 @@ class TagTest extends TestCase
             'slug' => 'unauth-tag'
         ];
 
-        $response = $this->postJson('/api/auth/tags', $data);
+        $response = $this->postJson('/api/admin/tags', $data);
 
         $response->assertStatus(401);
     }

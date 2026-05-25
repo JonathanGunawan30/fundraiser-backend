@@ -75,7 +75,7 @@ class BannerControllerTest extends TestCase
         $file = \Illuminate\Http\UploadedFile::fake()->image('banner.jpg');
         
         $response = $this->actingAs($admin, 'admin-api')
-            ->postJson('/api/auth/banners', array_merge($bannerData, ['image' => $file]));
+            ->postJson('/api/admin/banners', array_merge($bannerData, ['image' => $file]));
 
         $response->assertStatus(201)
             ->assertJson([
@@ -101,7 +101,7 @@ class BannerControllerTest extends TestCase
         });
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->putJson('/api/auth/banners/1', $bannerData);
+            ->putJson('/api/admin/banners/1', $bannerData);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -123,7 +123,7 @@ class BannerControllerTest extends TestCase
         });
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->deleteJson('/api/auth/banners/1');
+            ->deleteJson('/api/admin/banners/1');
 
         $response->assertStatus(200)
             ->assertJson([

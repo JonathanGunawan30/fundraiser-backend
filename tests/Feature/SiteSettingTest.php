@@ -40,7 +40,7 @@ class SiteSettingTest extends TestCase
         ];
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->postJson('/api/auth/site-settings', $data);
+            ->postJson('/api/admin/site-settings', $data);
 
         $response->assertStatus(201)
             ->assertJson([
@@ -66,7 +66,7 @@ class SiteSettingTest extends TestCase
         ];
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->putJson("/api/auth/site-settings/{$setting->id}", $data);
+            ->putJson("/api/admin/site-settings/{$setting->id}", $data);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -88,7 +88,7 @@ class SiteSettingTest extends TestCase
         $setting = SiteSetting::factory()->create();
 
         $response = $this->actingAs($admin, 'admin-api')
-            ->deleteJson("/api/auth/site-settings/{$setting->id}");
+            ->deleteJson("/api/admin/site-settings/{$setting->id}");
 
         $response->assertStatus(200)
             ->assertJson([
