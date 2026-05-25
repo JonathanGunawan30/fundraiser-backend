@@ -64,13 +64,15 @@ class CampaignTest extends TestCase
 
     public function test_admin_can_verify_campaign()
     {
+        \Illuminate\Support\Facades\Notification::fake();
         $admin = Admin::create([
             'name' => 'Admin',
             'email' => 'admin@example.com',
             'password' => bcrypt('password'),
         ]);
 
-        $campaign = Campaign::factory()->create(['verified_status' => 'pending']);
+        $user = User::factory()->create();
+        $campaign = Campaign::factory()->create(['verified_status' => 'pending', 'user_id' => $user->id]);
 
         $response = $this->actingAs($admin, 'admin-api')
             ->postJson("/api/auth/campaigns/{$campaign->id}/verify", [
@@ -82,6 +84,11 @@ class CampaignTest extends TestCase
         $this->assertEquals('approved', $campaign->verified_status);
         $this->assertEquals('active', $campaign->status);
         $this->assertEquals($admin->id, $campaign->verified_by);
+
+        \Illuminate\Support\Facades\Notification::assertSentTo(
+            $user,
+            \App\Notifications\CampaignVerifiedNotification::class
+        );
     }
 
     public function test_user_can_update_campaign()

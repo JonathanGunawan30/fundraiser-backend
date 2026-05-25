@@ -181,19 +181,6 @@ return new class extends Migration
             $table->timestamp('created_at')->useCurrent();
         });
 
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('type', 50);
-            $table->string('title', 255);
-            $table->text('body');
-            $table->text('action_url')->nullable();
-            $table->timestamp('read_at')->nullable();
-            $table->timestamp('created_at')->useCurrent();
-
-            $table->index(['user_id', 'read_at']);
-        });
-
         Schema::create('site_settings', function (Blueprint $table) {
             $table->increments('id');
             $table->string('key', 100)->unique();

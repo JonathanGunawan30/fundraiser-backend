@@ -67,9 +67,4 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Withdrawal::class);
     }
-
-    public function notifications(): HasMany
-    {
-        return $this->hasMany(Notification::class);
-    }
 }

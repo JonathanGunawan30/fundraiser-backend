@@ -70,15 +70,17 @@ class WithdrawalTest extends TestCase
     public function test_admin_can_approve_withdrawal_with_proof()
     {
         Storage::fake('r2');
+        \Illuminate\Support\Facades\Notification::fake();
         $admin = Admin::create([
             'name' => 'Admin',
             'email' => 'admin@example.com',
             'password' => bcrypt('password'),
         ]);
 
+        $user = User::factory()->create();
         $withdrawal = Withdrawal::create([
             'campaign_id' => Campaign::factory()->create(['collected_amount' => 1000000])->id,
-            'user_id' => User::factory()->create()->id,
+            'user_id' => $user->id,
             'amount' => 500000,
             'bank_name' => 'BCA',
             'account_number' => '1234567890',
@@ -101,6 +103,11 @@ class WithdrawalTest extends TestCase
         
         $filename = basename($withdrawal->transfer_proof_url);
         Storage::disk('r2')->assertExists('withdrawals/proofs/' . $filename);
+
+        \Illuminate\Support\Facades\Notification::assertSentTo(
+            $user,
+            \App\Notifications\WithdrawalProcessedNotification::class
+        );
     }
 
     public function test_admin_can_reject_withdrawal()
