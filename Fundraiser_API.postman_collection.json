@@ -1,0 +1,582 @@
+{
+	"info": {
+		"name": "Fundraiser API - 100% COMPLETE",
+		"description": "Definitive collection containing EVERY route defined in routes/api.php. Organized by role and resource. Includes all CRUD operations, file upload handling, and webhook simulators.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "0. AUTH & WEBHOOKS",
+			"item": [
+				{
+					"name": "Admin Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"password\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api", "auth", "login"] }
+					}
+				},
+				{
+					"name": "Midtrans Webhook (Public)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"order_id\": \"DON-12345\",\n    \"transaction_status\": \"settlement\",\n    \"payment_type\": \"bank_transfer\",\n    \"fraud_status\": \"accept\",\n    \"transaction_id\": \"midtrans-id-999\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{base_url}}/api/webhooks/midtrans", "host": ["{{base_url}}"], "path": ["api", "webhooks", "midtrans"] }
+					}
+				}
+			]
+		},
+		{
+			"name": "1. ADMIN API (Requires Admin Token)",
+			"item": [
+				{
+					"name": "Dashboard & Logs",
+					"item": [
+						{
+							"name": "Get Admin Stats",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+								"method": "GET",
+								"url": { "raw": "{{base_url}}/api/admin/dashboard", "host": ["{{base_url}}"], "path": ["api", "admin", "dashboard"] }
+							}
+						},
+						{
+							"name": "List Audit Logs",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+								"method": "GET",
+								"url": { "raw": "{{base_url}}/api/admin/audit-logs?per_page=20", "host": ["{{base_url}}"], "path": ["api", "admin", "audit-logs"], "query": [{ "key": "per_page", "value": "20" }] }
+							}
+						},
+						{
+							"name": "Show Log Detail",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+								"method": "GET",
+								"url": { "raw": "{{base_url}}/api/admin/audit-logs/1", "host": ["{{base_url}}"], "path": ["api", "admin", "audit-logs", "1"] }
+							}
+						}
+					]
+				},
+				{
+					"name": "Campaign Management",
+					"item": [
+						{
+							"name": "Verify Campaign (Approve/Reject)",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+								"method": "POST",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"approved\"\n}",
+									"options": { "raw": { "language": "json" } }
+								},
+								"url": { "raw": "{{base_url}}/api/admin/campaigns/1/verify", "host": ["{{base_url}}"], "path": ["api", "admin", "campaigns", "1", "verify"] }
+							}
+						},
+						{
+							"name": "Process Withdrawal",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+								"method": "POST",
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{ "key": "status", "value": "completed", "type": "text" },
+										{ "key": "transfer_proof", "type": "file", "src": [] },
+										{ "key": "rejection_reason", "value": "", "type": "text", "description": "Required if rejected" }
+									]
+								},
+								"url": { "raw": "{{base_url}}/api/admin/withdrawals/1/process", "host": ["{{base_url}}"], "path": ["api", "admin", "withdrawals", "1", "process"] }
+							}
+						}
+					]
+				},
+				{
+					"name": "Master Data CRUD",
+					"item": [
+						{
+							"name": "FAQs",
+							"item": [
+								{
+									"name": "Create FAQ",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "POST",
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"question\": \"Question?\",\n    \"answer\": \"Answer.\",\n    \"is_active\": true,\n    \"order_index\": 1\n}",
+											"options": { "raw": { "language": "json" } }
+										},
+										"url": { "raw": "{{base_url}}/api/admin/faqs", "host": ["{{base_url}}"], "path": ["api", "admin", "faqs"] }
+									}
+								},
+								{
+									"name": "Update FAQ",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "PUT",
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"question\": \"Updated Question?\"\n}",
+											"options": { "raw": { "language": "json" } }
+										},
+										"url": { "raw": "{{base_url}}/api/admin/faqs/1", "host": ["{{base_url}}"], "path": ["api", "admin", "faqs", "1"] }
+									}
+								},
+								{
+									"name": "Delete FAQ",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "DELETE",
+										"url": { "raw": "{{base_url}}/api/admin/faqs/1", "host": ["{{base_url}}"], "path": ["api", "admin", "faqs", "1"] }
+									}
+								}
+							]
+						},
+						{
+							"name": "Tags",
+							"item": [
+								{
+									"name": "Create Tag",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "POST",
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Urgent\",\n    \"slug\": \"urgent\"\n}",
+											"options": { "raw": { "language": "json" } }
+										},
+										"url": { "raw": "{{base_url}}/api/admin/tags", "host": ["{{base_url}}"], "path": ["api", "admin", "tags"] }
+									}
+								},
+								{
+									"name": "Update Tag",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "PUT",
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Sangat Urgent\"\n}",
+											"options": { "raw": { "language": "json" } }
+										},
+										"url": { "raw": "{{base_url}}/api/admin/tags/1", "host": ["{{base_url}}"], "path": ["api", "admin", "tags", "1"] }
+									}
+								},
+								{
+									"name": "Delete Tag",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "DELETE",
+										"url": { "raw": "{{base_url}}/api/admin/tags/1", "host": ["{{base_url}}"], "path": ["api", "admin", "tags", "1"] }
+									}
+								}
+							]
+						},
+						{
+							"name": "Banners",
+							"item": [
+								{
+									"name": "Create Banner",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "POST",
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{ "key": "title", "value": "New Promo", "type": "text" },
+												{ "key": "image", "type": "file", "src": [] },
+												{ "key": "is_active", "value": "1", "type": "text" }
+											]
+										},
+										"url": { "raw": "{{base_url}}/api/admin/banners", "host": ["{{base_url}}"], "path": ["api", "admin", "banners"] }
+									}
+								},
+								{
+									"name": "Update Banner",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "POST",
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{ "key": "title", "value": "Updated Title", "type": "text" },
+												{ "key": "_method", "value": "PUT", "type": "text" }
+											]
+										},
+										"url": { "raw": "{{base_url}}/api/admin/banners/1", "host": ["{{base_url}}"], "path": ["api", "admin", "banners", "1"] }
+									}
+								},
+								{
+									"name": "Delete Banner",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "DELETE",
+										"url": { "raw": "{{base_url}}/api/admin/banners/1", "host": ["{{base_url}}"], "path": ["api", "admin", "banners", "1"] }
+									}
+								}
+							]
+						},
+						{
+							"name": "Categories",
+							"item": [
+								{
+									"name": "Create Category",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "POST",
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{ "key": "name", "value": "Bencana", "type": "text" },
+												{ "key": "slug", "value": "bencana", "type": "text" },
+												{ "key": "icon", "type": "file", "src": [] }
+											]
+										},
+										"url": { "raw": "{{base_url}}/api/admin/campaign-categories", "host": ["{{base_url}}"], "path": ["api", "admin", "campaign-categories"] }
+									}
+								},
+								{
+									"name": "Update Category",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "POST",
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{ "key": "name", "value": "Kesehatan", "type": "text" },
+												{ "key": "_method", "value": "PUT", "type": "text" }
+											]
+										},
+										"url": { "raw": "{{base_url}}/api/admin/campaign-categories/1", "host": ["{{base_url}}"], "path": ["api", "admin", "campaign-categories", "1"] }
+									}
+								},
+								{
+									"name": "Delete Category",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "DELETE",
+										"url": { "raw": "{{base_url}}/api/admin/campaign-categories/1", "host": ["{{base_url}}"], "path": ["api", "admin", "campaign-categories", "1"] }
+									}
+								}
+							]
+						},
+						{
+							"name": "Site Settings",
+							"item": [
+								{
+									"name": "Create Setting",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "POST",
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"key\": \"contact_email\",\n    \"value\": \"support@fund.com\",\n    \"type\": \"string\"\n}",
+											"options": { "raw": { "language": "json" } }
+										},
+										"url": { "raw": "{{base_url}}/api/admin/site-settings", "host": ["{{base_url}}"], "path": ["api", "admin", "site-settings"] }
+									}
+								},
+								{
+									"name": "Update Setting",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "PUT",
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"value\": \"new-email@fund.com\"\n}",
+											"options": { "raw": { "language": "json" } }
+										},
+										"url": { "raw": "{{base_url}}/api/admin/site-settings/1", "host": ["{{base_url}}"], "path": ["api", "admin", "site-settings", "1"] }
+									}
+								},
+								{
+									"name": "Delete Setting",
+									"request": {
+										"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{admin_token}}", "type": "string" }] },
+										"method": "DELETE",
+										"url": { "raw": "{{base_url}}/api/admin/site-settings/1", "host": ["{{base_url}}"], "path": ["api", "admin", "site-settings", "1"] }
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "2. USER API (Requires User Token)",
+			"item": [
+				{
+					"name": "Profile & Dashboard",
+					"item": [
+						{
+							"name": "Get User Stats",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "GET",
+								"url": { "raw": "{{base_url}}/api/auth/dashboard", "host": ["{{base_url}}"], "path": ["api", "auth", "dashboard"] }
+							}
+						},
+						{
+							"name": "Update Profile",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "POST",
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{ "key": "name", "value": "Updated Name", "type": "text" },
+										{ "key": "avatar", "type": "file", "src": [] },
+										{ "key": "_method", "value": "PATCH", "type": "text" }
+									]
+								},
+								"url": { "raw": "{{base_url}}/api/auth/profile", "host": ["{{base_url}}"], "path": ["api", "auth", "profile"] }
+							}
+						}
+					]
+				},
+				{
+					"name": "My Campaigns",
+					"item": [
+						{
+							"name": "Create Campaign",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "POST",
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{ "key": "title", "value": "Bantu Sekolah", "type": "text" },
+										{ "key": "category_id", "value": "1", "type": "text" },
+										{ "key": "goal_amount", "value": "10000000", "type": "text" },
+										{ "key": "deadline", "value": "2026-12-31", "type": "text" },
+										{ "key": "cover_image", "type": "file", "src": [] },
+										{ "key": "description", "value": "Short desc", "type": "text" },
+										{ "key": "story", "value": "Long story", "type": "text" }
+									]
+								},
+								"url": { "raw": "{{base_url}}/api/auth/campaigns", "host": ["{{base_url}}"], "path": ["api", "auth", "campaigns"] }
+							}
+						},
+						{
+							"name": "Update Campaign",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "POST",
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{ "key": "title", "value": "Revisi Judul", "type": "text" },
+										{ "key": "_method", "value": "PUT", "type": "text" }
+									]
+								},
+								"url": { "raw": "{{base_url}}/api/auth/campaigns/1", "host": ["{{base_url}}"], "path": ["api", "auth", "campaigns", "1"] }
+							}
+						},
+						{
+							"name": "Delete Campaign",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "DELETE",
+								"url": { "raw": "{{base_url}}/api/auth/campaigns/1", "host": ["{{base_url}}"], "path": ["api", "auth", "campaigns", "1"] }
+							}
+						}
+					]
+				},
+				{
+					"name": "My Progress Updates",
+					"item": [
+						{
+							"name": "Post Update",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "POST",
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{ "key": "campaign_id", "value": "1", "type": "text" },
+										{ "key": "title", "value": "Penyaluran Tahap 1", "type": "text" },
+										{ "key": "content", "value": "Dana disalurkan.", "type": "text" },
+										{ "key": "image", "type": "file", "src": [] }
+									]
+								},
+								"url": { "raw": "{{base_url}}/api/auth/campaign-updates", "host": ["{{base_url}}"], "path": ["api", "auth", "campaign-updates"] }
+							}
+						},
+						{
+							"name": "Update Update",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "POST",
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{ "key": "_method", "value": "PUT", "type": "text" },
+										{ "key": "title", "value": "Update Terkoreksi", "type": "text" }
+									]
+								},
+								"url": { "raw": "{{base_url}}/api/auth/campaign-updates/1", "host": ["{{base_url}}"], "path": ["api", "auth", "campaign-updates", "1"] }
+							}
+						},
+						{
+							"name": "Delete Update",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "DELETE",
+								"url": { "raw": "{{base_url}}/api/auth/campaign-updates/1", "host": ["{{base_url}}"], "path": ["api", "auth", "campaign-updates", "1"] }
+							}
+						}
+					]
+				},
+				{
+					"name": "Financial Actions",
+					"item": [
+						{
+							"name": "Initiate Donation",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "POST",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"campaign_id\": 1,\n    \"amount\": 50000,\n    \"message\": \"Ikhlas membantu\"\n}",
+									"options": { "raw": { "language": "json" } }
+								},
+								"url": { "raw": "{{base_url}}/api/auth/donations", "host": ["{{base_url}}"], "path": ["api", "auth", "donations"] }
+							}
+						},
+						{
+							"name": "Request Withdrawal",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "POST",
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"campaign_id\": 1,\n    \"amount\": 500000,\n    \"bank_name\": \"BCA\",\n    \"account_number\": \"12345\",\n    \"account_name\": \"User Name\"\n}",
+									"options": { "raw": { "language": "json" } }
+								},
+								"url": { "raw": "{{base_url}}/api/auth/withdrawals", "host": ["{{base_url}}"], "path": ["api", "auth", "withdrawals"] }
+							}
+						}
+					]
+				},
+				{
+					"name": "Notifications",
+					"item": [
+						{
+							"name": "Get My Notifications",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "GET",
+								"url": { "raw": "{{base_url}}/api/auth/notifications", "host": ["{{base_url}}"], "path": ["api", "auth", "notifications"] }
+							}
+						},
+						{
+							"name": "Get Unread Only",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "GET",
+								"url": { "raw": "{{base_url}}/api/auth/notifications/unread", "host": ["{{base_url}}"], "path": ["api", "auth", "notifications", "unread"] }
+							}
+						},
+						{
+							"name": "Mark Read",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "PATCH",
+								"url": { "raw": "{{base_url}}/api/auth/notifications/uuid-here/read", "host": ["{{base_url}}"], "path": ["api", "auth", "notifications", "uuid-here", "read"] }
+							}
+						},
+						{
+							"name": "Mark All Read",
+							"request": {
+								"auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{user_token}}", "type": "string" }] },
+								"method": "POST",
+								"url": { "raw": "{{base_url}}/api/auth/notifications/read-all", "host": ["{{base_url}}"], "path": ["api", "auth", "notifications", "read-all"] }
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "3. PUBLIC API (No Auth)",
+			"item": [
+				{
+					"name": "Browse Campaigns",
+					"item": [
+						{
+							"name": "List All",
+							"request": { "method": "GET", "url": { "raw": "{{base_url}}/api/campaigns", "host": ["{{base_url}}"], "path": ["api", "campaigns"] } }
+						},
+						{
+							"name": "Search",
+							"request": { "method": "GET", "url": { "raw": "{{base_url}}/api/campaigns/search?keyword=bantu", "host": ["{{base_url}}"], "path": ["api", "campaigns", "search"], "query": [{ "key": "keyword", "value": "bantu" }] } }
+						},
+						{
+							"name": "Show Detail",
+							"request": { "method": "GET", "url": { "raw": "{{base_url}}/api/campaigns/1", "host": ["{{base_url}}"], "path": ["api", "campaigns", "1"] } }
+						}
+					]
+				},
+				{
+					"name": "Browse Categories",
+					"item": [
+						{
+							"name": "List All",
+							"request": { "method": "GET", "url": { "raw": "{{base_url}}/api/campaign-categories", "host": ["{{base_url}}"], "path": ["api", "campaign-categories"] } }
+						},
+						{
+							"name": "Show Detail",
+							"request": { "method": "GET", "url": { "raw": "{{base_url}}/api/campaign-categories/1", "host": ["{{base_url}}"], "path": ["api", "campaign-categories", "1"] } }
+						}
+					]
+				},
+				{
+					"name": "Others (Tags, Banners, FAQs, Users, Withdrawals)",
+					"item": [
+						{
+							"name": "List Tags",
+							"request": { "method": "GET", "url": { "raw": "{{base_url}}/api/tags", "host": ["{{base_url}}"], "path": ["api", "tags"] } }
+						},
+						{
+							"name": "List Banners",
+							"request": { "method": "GET", "url": { "raw": "{{base_url}}/api/banners", "host": ["{{base_url}}"], "path": ["api", "banners"] } }
+						},
+						{
+							"name": "List FAQs",
+							"request": { "method": "GET", "url": { "raw": "{{base_url}}/api/faqs", "host": ["{{base_url}}"], "path": ["api", "faqs"] } }
+						},
+						{
+							"name": "List Site Settings",
+							"request": { "method": "GET", "url": { "raw": "{{base_url}}/api/site-settings", "host": ["{{base_url}}"], "path": ["api", "site-settings"] } }
+						},
+						{
+							"name": "List Users",
+							"request": { "method": "GET", "url": { "raw": "{{base_url}}/api/users", "host": ["{{base_url}}"], "path": ["api", "users"] } }
+						},
+						{
+							"name": "List Withdrawals",
+							"request": { "method": "GET", "url": { "raw": "{{base_url}}/api/withdrawals", "host": ["{{base_url}}"], "path": ["api", "withdrawals"] } }
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{ "key": "base_url", "value": "http://localhost:8000" },
+		{ "key": "admin_token", "value": "" },
+		{ "key": "user_token", "value": "" }
+	]
+}
