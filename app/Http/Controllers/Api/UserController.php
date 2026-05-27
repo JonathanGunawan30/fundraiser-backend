@@ -34,9 +34,8 @@ class UserController extends Controller
         $perPage = $request->query('per_page', 10);
         $users = $this->userService->getAllUsers($perPage);
 
-        return $this->successWithPagination($users, 'Users retrieved successfully');
+        return $this->successWithPagination(UserResource::collection($users), 'Users retrieved successfully');
     }
-    
 
     /**
      * Display the specified resource.
@@ -48,7 +47,7 @@ class UserController extends Controller
     {
         try {
             $user = $this->userService->getUserById($id);
-            return $this->success($user, 'User retrieved successfully');
+            return $this->success(new UserResource($user), 'User retrieved successfully');
         } catch (ModelNotFoundException $e) {
             return $this->error($e->getMessage(), 404);
         } catch (\Exception $e) {
@@ -57,22 +56,22 @@ class UserController extends Controller
     }
 
     /**
-     * Search for resources.
+     * Update user profile.
      *
-     * @param Request $request
+     * @param UpdateProfileRequest $request
      * @return JsonResponse
      */
-    public function search(Request $request): JsonResponse
+    public function update(UpdateProfileRequest $request): JsonResponse
     {
-        $keyword = $request->query('keyword', '');
-        $perPage = $request->query('per_page', 10);
-        
-        $users = $this->userService->searchUsers($keyword, $perPage);
+        try {
+            $data = $request->validated();
+            if ($request->hasFile('avatar')) {
+                $data['avatar'] = $request->file('avatar');
+            }
 
-        return $this->successWithPagination($users, 'Users search results retrieved successfully');
-    }
-}
-        return $this->success(new UserResource($user), 'Profile updated successfully');
+            $user = $this->userService->updateProfile(Auth::id(), $data);
+
+            return $this->success(new UserResource($user), 'Profile updated successfully');
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }
@@ -91,6 +90,6 @@ class UserController extends Controller
         
         $users = $this->userService->searchUsers($keyword, $perPage);
 
-        return $this->successWithPagination($users, 'Users search results retrieved successfully');
+        return $this->successWithPagination(UserResource::collection($users), 'Users search results retrieved successfully');
     }
 }
