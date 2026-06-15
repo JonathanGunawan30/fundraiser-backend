@@ -96,7 +96,8 @@ Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
 
 // User Auth Routes
 Route::prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'adminLogin']); // Legacy/Admin login
+    Route::post('otp', [AuthController::class, 'requestOtp']);
+    Route::post('login', [AuthController::class, 'adminLogin']); // Admin OTP login
 
     Route::middleware('auth:api')->group(function () {
         // Dashboard

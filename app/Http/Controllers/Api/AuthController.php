@@ -8,6 +8,7 @@ use App\Services\Interfaces\AuthServiceInterface;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Http\Requests\Api\AdminOtpRequest;
 
 class AuthController extends Controller
 {
@@ -21,7 +22,21 @@ class AuthController extends Controller
     }
 
     /**
+     * Request OTP for admin login.
+     *
+     * @param AdminOtpRequest $request
+     * @return JsonResponse
+     */
+    public function requestOtp(AdminOtpRequest $request): JsonResponse
+    {
+        $this->authService->requestOtp($request->validated());
+
+        return $this->success(null, 'OTP sent successfully to your email');
+    }
+
+    /**
      * Admin login.
+...
      *
      * @param LoginRequest $request
      * @return JsonResponse
