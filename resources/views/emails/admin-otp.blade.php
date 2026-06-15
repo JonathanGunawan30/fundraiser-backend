@@ -2,18 +2,49 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
-    <p>Halo Admin,</p>
-    
-    <p>Berikut adalah kode OTP Anda untuk masuk ke dashboard admin:</p>
-    
-    <h2 style="font-size: 24px; font-weight: bold; letter-spacing: 5px;">{{ $otp }}</h2>
-    
-    <p>Kode ini akan kadaluwarsa dalam 5 menit.</p>
-    
-    <p>Jika Anda tidak merasa melakukan permintaan ini, silakan abaikan email ini.</p>
-    
-    <p>Salam,<br>Tim Fundraiser</p>
+<body style="margin:0;padding:0;background:#F3F4F6;font-family:'Segoe UI',Arial,sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F3F4F6;padding:40px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+
+                    <tr>
+                        <td style="background:#1677ff;padding:40px;text-align:center;">
+                            <h1 style="margin:0;color:#ffffff;font-size:26px;font-weight:700;letter-spacing:0.5px;">Fundraiser</h1>
+                            <p style="margin:8px 0 0;color:#bfdbfe;font-size:14px;">Admin Dashboard</p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding:40px;">
+                            <p style="margin:0 0 8px;color:#111827;font-size:16px;">Halo, <strong>Admin</strong>,</p>
+                            <p style="margin:0 0 32px;color:#6B7280;font-size:15px;line-height:1.6;">
+                                Gunakan kode OTP berikut untuk masuk ke dashboard admin. Kode ini hanya berlaku selama <strong>5 menit</strong>.
+                            </p>
+
+                            <div style="background:#F0F7FF;border:2px dashed #1677ff;border-radius:12px;padding:32px;text-align:center;margin-bottom:32px;">
+                                <p style="margin:0 0 8px;color:#6B7280;font-size:13px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Kode OTP Anda</p>
+                                <h2 style="margin:0;font-size:42px;font-weight:800;letter-spacing:12px;color:#1677ff;">{{ $otp }}</h2>
+                            </div>
+
+                            <p style="margin:0;color:#6B7280;font-size:14px;line-height:1.6;">
+                                Jika Anda tidak merasa melakukan permintaan ini, abaikan email ini dan pastikan akun Anda aman.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="background:#F9FAFB;border-top:1px solid #E5E7EB;padding:24px 40px;text-align:center;">
+                            <p style="margin:0;color:#9CA3AF;font-size:12px;">© 2026 Fundraiser. All rights reserved.</p>
+                            <p style="margin:8px 0 0;color:#9CA3AF;font-size:12px;">This is an automated email. Please do not reply.</p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
