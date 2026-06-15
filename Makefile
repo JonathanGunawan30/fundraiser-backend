@@ -6,7 +6,7 @@ APP_SERVICE = app
 DB_SERVICE = db
 EXEC_APP = $(DOCKER_COMPOSE) exec $(APP_SERVICE)
 
-.PHONY: help up down restart build ps logs shell install migrate migrate-fresh seed test clear optimize
+.PHONY: help up down restart build ps logs shell install migrate migrate-fresh seed admin test clear optimize
 
 help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -45,6 +45,9 @@ migrate-fresh: ## Run migrations fresh with seeders
 
 seed: ## Run database seeders
 	$(EXEC_APP) php artisan db:seed
+
+admin: ## Create a new admin user
+	$(EXEC_APP) php artisan make:admin
 
 test: ## Run tests
 	$(EXEC_APP) php artisan test

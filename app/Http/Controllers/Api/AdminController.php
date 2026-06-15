@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\UpdateAdminProfileRequest;
+use App\Http\Requests\Api\UpdateAdminPasswordRequest;
+use App\Http\Resources\AdminResource;
 use App\Services\Interfaces\AdminServiceInterface;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AdminController extends Controller
@@ -66,5 +70,52 @@ class AdminController extends Controller
         $admins = $this->adminService->searchAdmins($keyword, $perPage);
 
         return $this->successWithPagination($admins, 'Admins search results retrieved successfully');
+    }
+
+    /**
+     * Get current admin profile.
+     *
+     * @return JsonResponse
+     */
+    public function profile(): JsonResponse
+    {
+        $admin = Auth::guard('admin-api')->user();
+        return $this->success(new AdminResource($admin), 'Admin profile retrieved successfully');
+    }
+
+    /**
+     * Update admin profile.
+     *
+     * @param UpdateAdminProfileRequest $request
+     * @return JsonResponse
+     */
+    public function updateProfile(UpdateAdminProfileRequest $request): JsonResponse
+    {
+        $adminId = Auth::guard('admin-api')->id();
+        $data = $request->validated();
+
+        if ($request->hasFile('avatar')) {
+            $data['avatar'] = $request->file('avatar');
+        }
+
+        $admin = $this->adminService->updateProfile($adminId, $data);
+
+        return $this->success(new AdminResource($admin), 'Profile updated successfully');
+    }
+
+    /**
+     * Update admin password.
+     *
+     * @param UpdateAdminPasswordRequest $request
+     * @return JsonResponse
+     */
+    public function updatePassword(UpdateAdminPasswordRequest $request): JsonResponse
+    {
+        $adminId = Auth::guard('admin-api')->id();
+        $data = $request->validated();
+
+        $this->adminService->updatePassword($adminId, $data['current_password'], $data['password']);
+
+        return $this->success(null, 'Password updated successfully');
     }
 }

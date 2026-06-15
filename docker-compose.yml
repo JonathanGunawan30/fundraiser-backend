@@ -6,12 +6,12 @@ services:
     container_name: fundraiser-app
     restart: unless-stopped
     working_dir: /var/www
-    command: php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8000
+    command: php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8000 --watch
+    volumes:
+      - .:/var/www
     ports:
       - "8000:8000"
       - "8080:8080"
-    volumes:
-      - .:/var/www
     networks:
       - fundraiser-network
     depends_on:

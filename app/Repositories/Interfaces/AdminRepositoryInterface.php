@@ -31,4 +31,13 @@ interface AdminRepositoryInterface
      * @return LengthAwarePaginator
      */
     public function search(string $keyword, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Update admin.
+     *
+     * @param Admin $admin
+     * @param array $data
+     * @return Admin
+     */
+    public function update(Admin $admin, array $data): Admin;
 }

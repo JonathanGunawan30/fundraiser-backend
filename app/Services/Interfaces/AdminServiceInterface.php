@@ -31,4 +31,23 @@ interface AdminServiceInterface
      * @return LengthAwarePaginator
      */
     public function searchAdmins(string $keyword, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Update admin profile.
+     *
+     * @param int $id
+     * @param array $data
+     * @return Admin
+     */
+    public function updateProfile(int $id, array $data): Admin;
+
+    /**
+     * Update admin password.
+     *
+     * @param int $id
+     * @param string $currentPassword
+     * @param string $newPassword
+     * @return bool
+     */
+    public function updatePassword(int $id, string $currentPassword, string $newPassword): bool;
 }

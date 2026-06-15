@@ -38,6 +38,11 @@ Route::post('webhooks/midtrans', [WebhookController::class, 'handleMidtrans'])->
 Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
+    // Profile
+    Route::get('profile', [AdminController::class, 'profile']);
+    Route::patch('profile', [AdminController::class, 'updateProfile']);
+    Route::patch('password', [AdminController::class, 'updatePassword']);
+
     // Dashboard
     Route::get('dashboard', [DashboardController::class, 'adminIndex']);
 

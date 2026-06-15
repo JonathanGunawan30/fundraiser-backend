@@ -33,4 +33,14 @@ class AdminRepository implements AdminRepositoryInterface
             ->orWhere('email', 'like', "%{$keyword}%")
             ->paginate($perPage);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(Admin $admin, array $data): Admin
+    {
+        $admin->fill($data);
+        $admin->save();
+        return $admin->fresh();
+    }
 }
