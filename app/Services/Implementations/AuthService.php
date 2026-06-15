@@ -10,10 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-use Resend\Laravel\Facades\Resend;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Mail;
 use App\Mail\AdminOtpMail;
-use App\Jobs\SendAdminOtpJob;
 
 class AuthService implements AuthServiceInterface
 {
@@ -81,7 +80,7 @@ class AuthService implements AuthServiceInterface
         Redis::setex('otp:' . $data['email'], 300, $otp);
 
         // Send OTP via email
-        SendAdminOtpJob::dispatch($admin->email, $otp);
+        Mail::to($admin->email)->send(new AdminOtpMail($otp));
     }
 
     /**
