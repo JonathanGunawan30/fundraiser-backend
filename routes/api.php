@@ -34,6 +34,11 @@ Route::get('/login', function () {
 // Webhooks (Public)
 Route::post('webhooks/midtrans', [WebhookController::class, 'handleMidtrans'])->name('webhooks.midtrans');
 
+Route::prefix('admin')->group(function () {
+    Route::post('otp', [AuthController::class, 'requestOtp']);
+    Route::post('login', [AuthController::class, 'adminLogin']);
+});
+
 // Admin Routes
 Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -96,9 +101,6 @@ Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
 
 // User Auth Routes
 Route::prefix('auth')->group(function () {
-    Route::post('otp', [AuthController::class, 'requestOtp']);
-    Route::post('login', [AuthController::class, 'adminLogin']); // Admin OTP login
-
     Route::middleware('auth:api')->group(function () {
         // Dashboard
         Route::get('dashboard', [DashboardController::class, 'userIndex']);

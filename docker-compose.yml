@@ -55,6 +55,21 @@ services:
     networks:
       - fundraiser-network
 
+  otp-email-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fundraiser-otp-email-worker
+    restart: unless-stopped
+    working_dir: /var/www
+    command: php artisan queue:work --tries=3
+    volumes:
+      - .:/var/www
+    networks:
+      - fundraiser-network
+    depends_on:
+      - rabbitmq
+
 networks:
   fundraiser-network:
     driver: bridge
