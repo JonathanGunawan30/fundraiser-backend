@@ -21,10 +21,18 @@ class AuthServiceTest extends TestCase
     {
         $admin = new Admin([
             'email' => 'admin@test.com',
-            'password' => Hash::make('password'),
             'is_active' => true
         ]);
         $admin->id = 1;
+
+        \Illuminate\Support\Facades\Redis::shouldReceive('get')
+            ->once()
+            ->with('otp:admin@test.com')
+            ->andReturn('123456');
+
+        \Illuminate\Support\Facades\Redis::shouldReceive('del')
+            ->once()
+            ->with('otp:admin@test.com');
 
         $this->mock(AuthRepositoryInterface::class, function (MockInterface $mock) use ($admin) {
             $mock->shouldReceive('findAdminByEmail')->with('admin@test.com')->andReturn($admin);
@@ -32,7 +40,7 @@ class AuthServiceTest extends TestCase
         });
 
         $service = app(AuthService::class);
-        $result = $service->adminLogin(['email' => 'admin@test.com', 'password' => 'password']);
+        $result = $service->adminLogin(['email' => 'admin@test.com', 'otp' => '123456']);
 
         $this->assertArrayHasKey('token', $result);
         $this->assertEquals('admin@test.com', $result['admin']->email);

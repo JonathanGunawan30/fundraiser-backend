@@ -13,6 +13,14 @@ interface AuthServiceInterface
     public function adminLogin(array $credentials): array;
 
     /**
+     * Request OTP for admin login.
+     *
+     * @param array $data
+     * @return void
+     */
+    public function requestOtp(array $data): void;
+
+    /**
      * Authenticate a user via OAuth.
      *
      * @param string $provider

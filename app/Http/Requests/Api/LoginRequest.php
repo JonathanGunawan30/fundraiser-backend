@@ -15,7 +15,7 @@ class LoginRequest extends BaseRequest
     {
         return [
             'email' => 'required|email',
-            'password' => 'required|string',
+            'otp' => 'required|string|size:6',
         ];
     }
 }
