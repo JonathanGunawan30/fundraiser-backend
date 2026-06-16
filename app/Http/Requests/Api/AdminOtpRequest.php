@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api;
 
 use App\Http\Requests\BaseRequest;
+use App\Rules\Turnstile;
 
 class AdminOtpRequest extends BaseRequest
 {
@@ -15,6 +16,7 @@ class AdminOtpRequest extends BaseRequest
     {
         return [
             'email' => 'required|email|exists:admins,email',
+            'cf_turnstile_response' => ['required', new Turnstile],
         ];
     }
 
