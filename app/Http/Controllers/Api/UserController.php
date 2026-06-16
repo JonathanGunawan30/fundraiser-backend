@@ -38,6 +38,16 @@ class UserController extends Controller
     }
 
     /**
+     * Get authenticated user profile.
+     *
+     * @return JsonResponse
+     */
+    public function profile(): JsonResponse
+    {
+        return $this->success(new UserResource(Auth::user()), 'User profile retrieved successfully');
+    }
+
+    /**
      * Display the specified resource.
      *
      * @param int $id

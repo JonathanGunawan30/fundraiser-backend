@@ -106,6 +106,7 @@ Route::prefix('auth')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'userIndex']);
 
         // Profile
+        Route::get('profile', [UserController::class, 'profile']);
         Route::patch('profile', [UserController::class, 'update']);
 
         // Campaigns

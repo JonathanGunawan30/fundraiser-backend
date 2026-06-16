@@ -52,6 +52,7 @@ class UserAuthController extends Controller
             $params = http_build_query([
                 'token' => $token,
                 'name' => $user->name,
+                'email' => $user->email,
                 'avatar' => $user->avatar_url,
                 'role' => 'user'
             ]);

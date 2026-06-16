@@ -30,6 +30,11 @@ class AuthRepository implements AuthRepositoryInterface
 
             if ($oauthAccount) {
                 $user = $oauthAccount->user;
+                // Update user info if changed
+                $user->update([
+                    'name' => $oauthData['name'] ?? $user->name,
+                    'avatar_url' => $oauthData['avatar_url'] ?? $user->avatar_url,
+                ]);
             } else {
                 // 2. Handle missing email by generating a unique placeholder if necessary
                 $email = $oauthData['email'] ?? ($oauthData['provider_id'] . '@' . $oauthData['provider'] . '.placeholder.com');
@@ -44,6 +49,12 @@ class AuthRepository implements AuthRepositoryInterface
                         'email' => $email,
                         'avatar_url' => $oauthData['avatar_url'] ?? null,
                         'status' => 'active',
+                    ]);
+                } else {
+                    // Update existing user with new info
+                    $user->update([
+                        'name' => $oauthData['name'] ?? $user->name,
+                        'avatar_url' => $oauthData['avatar_url'] ?? $user->avatar_url,
                     ]);
                 }
             }
