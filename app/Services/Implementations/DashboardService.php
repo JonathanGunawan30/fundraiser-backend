@@ -30,6 +30,7 @@ class DashboardService implements DashboardServiceInterface
                     ->limit(5)
                     ->get(),
                 'new_campaigns' => Campaign::with('user')
+                    ->where('status', '!=', 'draft')
                     ->latest()
                     ->limit(5)
                     ->get(),

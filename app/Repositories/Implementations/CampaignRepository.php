@@ -13,7 +13,48 @@ class CampaignRepository implements CampaignRepositoryInterface
      */
     public function getAllPaginated(int $perPage): LengthAwarePaginator
     {
-        return Campaign::with(['user', 'category'])->paginate($perPage);
+        return Campaign::with(['user', 'category'])
+            ->where('status', 'active')
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUserCampaignsPaginated(int $userId, int $perPage): LengthAwarePaginator
+    {
+        return Campaign::with(['user', 'category'])
+            ->where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAdminCampaignsPaginated(int $perPage, ?string $status = null): LengthAwarePaginator
+    {
+        $query = Campaign::with(['user', 'category'])->orderBy('created_at', 'desc');
+
+        if ($status) {
+            $query->where('status', $status);
+        } else {
+            // By default, admins don't see drafts
+            $query->where('status', '!=', 'draft');
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findBySlug(string $slug): ?Campaign
+    {
+        return Campaign::with(['user', 'category', 'tags', 'images', 'updates', 'verifier'])
+            ->where('slug', $slug)
+            ->first();
     }
 
     /**
@@ -30,8 +71,12 @@ class CampaignRepository implements CampaignRepositoryInterface
     public function search(string $keyword, int $perPage): LengthAwarePaginator
     {
         return Campaign::with(['user', 'category'])
-            ->where('title', 'like', "%{$keyword}%")
-            ->orWhere('slug', 'like', "%{$keyword}%")
+            ->where('status', 'active')
+            ->where(function ($query) use ($keyword) {
+                $query->where('title', 'like', "%{$keyword}%")
+                    ->orWhere('slug', 'like', "%{$keyword}%");
+            })
+            ->orderBy('created_at', 'desc')
             ->paginate($perPage);
     }
 

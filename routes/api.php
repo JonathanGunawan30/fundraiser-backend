@@ -92,6 +92,9 @@ Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
         Route::delete('/{site_setting}', [SiteSettingController::class, 'destroy']);
     });
 
+    // Campaigns
+    Route::get('campaigns', [CampaignController::class, 'index']);
+
     // Campaign Verifications
     Route::post('campaigns/{id}/verify', [CampaignController::class, 'verify']);
 
@@ -110,6 +113,7 @@ Route::prefix('auth')->group(function () {
         Route::patch('profile', [UserController::class, 'update']);
 
         // Campaigns
+        Route::get('my-campaigns', [CampaignController::class, 'myCampaigns']);
         Route::prefix('campaigns')->group(function () {
             Route::post('/', [CampaignController::class, 'store']);
             Route::put('/{campaign}', [CampaignController::class, 'update']);
@@ -155,7 +159,7 @@ Route::prefix('campaign-categories')->group(function () {
 Route::prefix('campaigns')->group(function () {
     Route::get('/', [CampaignController::class, 'index']);
     Route::get('/search', [CampaignController::class, 'search']);
-    Route::get('/{id}', [CampaignController::class, 'show']);
+    Route::get('/{slug}', [CampaignController::class, 'show']);
 });
 
 Route::prefix('campaign-updates')->group(function () {

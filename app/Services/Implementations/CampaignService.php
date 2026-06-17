@@ -31,6 +31,36 @@ class CampaignService implements CampaignServiceInterface
     /**
      * @inheritDoc
      */
+    public function getUserCampaigns(int $userId, int $perPage): LengthAwarePaginator
+    {
+        return $this->campaignRepository->getUserCampaignsPaginated($userId, $perPage);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAdminCampaigns(int $perPage, ?string $status = null): LengthAwarePaginator
+    {
+        return $this->campaignRepository->getAdminCampaignsPaginated($perPage, $status);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCampaignBySlug(string $slug): Campaign
+    {
+        $campaign = $this->campaignRepository->findBySlug($slug);
+
+        if (!$campaign) {
+            throw new ModelNotFoundException("Campaign with slug '{$slug}' not found.");
+        }
+
+        return $campaign;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getCampaignById(int $id): Campaign
     {
         $campaign = $this->campaignRepository->findById($id);
@@ -56,6 +86,11 @@ class CampaignService implements CampaignServiceInterface
     public function createCampaign(array $data): Campaign
     {
         return DB::transaction(function () use ($data) {
+            // Force status to draft if not provided or if not admin
+            if (!isset($data['status'])) {
+                $data['status'] = 'draft';
+            }
+
             // Handle cover image
             if (isset($data['cover_image']) && $data['cover_image'] instanceof UploadedFile) {
                 $data['cover_image_url'] = $this->uploadToR2($data['cover_image'], 'campaigns/covers');
@@ -95,6 +130,11 @@ class CampaignService implements CampaignServiceInterface
     {
         return DB::transaction(function () use ($id, $data) {
             $campaign = $this->getCampaignById($id);
+
+            // Security Rule: Cannot revert to draft if already published (pending/active/completed)
+            if (isset($data['status']) && $data['status'] === 'draft' && $campaign->status !== 'draft') {
+                throw new \InvalidArgumentException("Cannot revert a published campaign to draft status.");
+            }
 
             // Business Rule: Cannot lower goal amount below collected amount
             if (isset($data['goal_amount']) && $data['goal_amount'] < $campaign->collected_amount) {

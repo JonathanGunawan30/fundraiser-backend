@@ -16,6 +16,32 @@ interface CampaignServiceInterface
     public function getAllCampaigns(int $perPage): LengthAwarePaginator;
 
     /**
+     * Get user campaigns paginated.
+     *
+     * @param int $userId
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    public function getUserCampaigns(int $userId, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Get admin campaigns paginated.
+     *
+     * @param int $perPage
+     * @param string|null $status
+     * @return LengthAwarePaginator
+     */
+    public function getAdminCampaigns(int $perPage, ?string $status = null): LengthAwarePaginator;
+
+    /**
+     * Get campaign by Slug.
+     *
+     * @param string $slug
+     * @return Campaign
+     */
+    public function getCampaignBySlug(string $slug): Campaign;
+
+    /**
      * Get campaign by ID.
      *
      * @param int $id

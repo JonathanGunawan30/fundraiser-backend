@@ -34,9 +34,33 @@ class CampaignController extends Controller
     public function index(Request $request): JsonResponse
     {
         $perPage = $request->query('per_page', 10);
-        $campaigns = $this->campaignService->getAllCampaigns($perPage);
+        
+        // If request is from admin dashboard
+        if ($request->is('api/admin/*')) {
+            $status = $request->query('status');
+            $campaigns = $this->campaignService->getAdminCampaigns($perPage, $status);
+        } else {
+            // Public view only shows active campaigns (handled by repository)
+            $campaigns = $this->campaignService->getAllCampaigns($perPage);
+        }
 
         return $this->successWithPagination(CampaignResource::collection($campaigns), 'Campaigns retrieved successfully');
+    }
+
+    /**
+     * Display current user's campaigns.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function myCampaigns(Request $request): JsonResponse
+    {
+        $perPage = $request->query('per_page', 10);
+        $userId = Auth::id();
+        
+        $campaigns = $this->campaignService->getUserCampaigns($userId, $perPage);
+
+        return $this->successWithPagination(CampaignResource::collection($campaigns), 'My campaigns retrieved successfully');
     }
 
     /**
@@ -66,13 +90,30 @@ class CampaignController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param string $slug
      * @return JsonResponse
      */
-    public function show(int $id): JsonResponse
+    public function show(string $slug): JsonResponse
     {
         try {
-            $campaign = $this->campaignService->getCampaignById($id);
+            // Try to find by slug first, then by ID if slug is numeric
+            if (is_numeric($slug)) {
+                $campaign = $this->campaignService->getCampaignById((int) $slug);
+            } else {
+                $campaign = $this->campaignService->getCampaignBySlug($slug);
+            }
+            
+            // Access Control: Non-active campaigns only visible to owner or admin
+            if ($campaign->status !== 'active') {
+                $isAdmin = Auth::guard('admin-api')->check();
+                $currentUserId = Auth::guard('api')->id();
+                $isOwner = $currentUserId && $currentUserId === $campaign->user_id;
+
+                if (!$isAdmin && !$isOwner) {
+                    return $this->error('You do not have permission to view this campaign.', 403);
+                }
+            }
+
             $campaign->load(['user', 'category', 'tags', 'images', 'updates']);
             return $this->success(new CampaignResource($campaign), 'Campaign retrieved successfully');
         } catch (ModelNotFoundException $e) {
