@@ -21,14 +21,14 @@ class UpdateCampaignRequest extends BaseRequest
             'slug' => 'sometimes|required|string|max:255|unique:campaigns,slug,' . $id,
             'description' => 'sometimes|required|string|max:500',
             'story' => 'sometimes|required|string',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
             'goal_amount' => 'sometimes|required|numeric|min:10000',
-            'deadline' => 'sometimes|required|date|after:today',
+            'deadline' => 'sometimes|required|date|after_or_equal:today',
             'status' => 'sometimes|required|string|in:draft,pending,active,completed,suspended',
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
             'images' => 'nullable|array|max:5',
-            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
         ];
     }
 }
