@@ -13,6 +13,14 @@ class DonationRepository implements DonationRepositoryInterface
         return Donation::with(['user', 'campaign'])->paginate($perPage);
     }
 
+    public function getByUserPaginated(int $userId, int $perPage): LengthAwarePaginator
+    {
+        return Donation::with(['campaign'])
+            ->where('user_id', $userId)
+            ->latest()
+            ->paginate($perPage);
+    }
+
     public function findById(int $id): ?Donation
     {
         return Donation::with(['user', 'campaign', 'payment'])->find($id);

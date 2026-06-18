@@ -129,6 +129,7 @@ Route::prefix('auth')->group(function () {
 
         // Donations
         Route::prefix('donations')->group(function () {
+            Route::get('/', [DonationController::class, 'index']);
             Route::post('/', [DonationController::class, 'store']);
             Route::get('/{number}', [DonationController::class, 'show']);
         });

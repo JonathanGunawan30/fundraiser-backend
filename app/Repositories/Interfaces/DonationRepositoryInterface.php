@@ -8,6 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 interface DonationRepositoryInterface
 {
     public function getAllPaginated(int $perPage): LengthAwarePaginator;
+    public function getByUserPaginated(int $userId, int $perPage): LengthAwarePaginator;
     public function findById(int $id): ?Donation;
     public function findByNumber(string $number): ?Donation;
     public function create(array $data): Donation;

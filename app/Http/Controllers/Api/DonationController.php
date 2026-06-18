@@ -20,8 +20,9 @@ class DonationController extends Controller
 
     public function index(Request $request): JsonResponse
     {
+        $userId = Auth::id();
         $perPage = $request->query('per_page', 10);
-        $donations = $this->donationService->getAllDonations($perPage);
+        $donations = $this->donationService->getUserDonations($userId, $perPage);
         return $this->successWithPagination(DonationResource::collection($donations), 'Donations retrieved successfully');
     }
 

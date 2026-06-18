@@ -15,6 +15,7 @@ class DonationResource extends JsonResource
             'campaign' => [
                 'id' => $this->campaign->id,
                 'title' => $this->campaign->title,
+                'slug' => $this->campaign->slug,
             ],
             'amount' => $this->amount,
             'message' => $this->message,

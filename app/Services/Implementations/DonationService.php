@@ -26,6 +26,11 @@ class DonationService implements DonationServiceInterface
         return $this->donationRepository->getAllPaginated($perPage);
     }
 
+    public function getUserDonations(int $userId, int $perPage): LengthAwarePaginator
+    {
+        return $this->donationRepository->getByUserPaginated($userId, $perPage);
+    }
+
     public function getDonationByNumber(string $number): Donation
     {
         $donation = $this->donationRepository->findByNumber($number);
