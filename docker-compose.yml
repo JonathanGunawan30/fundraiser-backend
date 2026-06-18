@@ -55,11 +55,11 @@ services:
     networks:
       - fundraiser-network
 
-  otp-email-worker:
+  queue-worker:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: fundraiser-otp-email-worker
+    container_name: fundraiser-queue-worker
     restart: unless-stopped
     working_dir: /var/www
     command: php artisan queue:work --tries=3

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\SendCampaignStatusJob;
 
 class CampaignService implements CampaignServiceInterface
 {
@@ -224,6 +225,13 @@ class CampaignService implements CampaignServiceInterface
 
         if ($campaign->user) {
             $campaign->user->notify(new \App\Notifications\CampaignVerifiedNotification($campaign));
+
+            SendCampaignStatusJob::dispatch(
+                $campaign->user->email,
+                $campaign->user->name,
+                $campaign->title,
+                $status
+            );
         }
 
         return $campaign;
