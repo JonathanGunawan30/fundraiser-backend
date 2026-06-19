@@ -12,7 +12,7 @@ class CampaignUpdateResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'body' => $this->body,
+            'content' => $this->content,
             'image_url' => $this->image_url,
             'created_at' => $this->created_at?->toDateTimeString(),
         ];
