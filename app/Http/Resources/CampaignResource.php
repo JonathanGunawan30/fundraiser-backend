@@ -35,6 +35,7 @@ class CampaignResource extends JsonResource
             'tags' => TagResource::collection($this->whenLoaded('tags')),
             'images' => CampaignImageResource::collection($this->whenLoaded('images')),
             'updates' => CampaignUpdateResource::collection($this->whenLoaded('updates')),
+            'donations' => DonationResource::collection($this->whenLoaded('donations')),
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
         ];

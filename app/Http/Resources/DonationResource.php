@@ -27,6 +27,7 @@ class DonationResource extends JsonResource
                 'payment_url' => $this->payment?->payment_url,
                 'status' => $this->payment?->status,
             ],
+            'user' => new UserResource($this->whenLoaded('user')),
             'created_at' => $this->created_at?->toDateTimeString(),
         ];
     }

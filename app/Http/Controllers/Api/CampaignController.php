@@ -115,7 +115,9 @@ class CampaignController extends Controller
                 }
             }
 
-            $campaign->load(['user', 'category', 'tags', 'images', 'updates']);
+            $campaign->load(['user', 'category', 'tags', 'images', 'updates', 'donations' => function($q) {
+                $q->where('status', 'success')->with('user')->orderBy('created_at', 'desc');
+            }]);
             return $this->success(new CampaignResource($campaign), 'Campaign retrieved successfully');
         } catch (ModelNotFoundException $e) {
             return $this->error($e->getMessage(), 404);
