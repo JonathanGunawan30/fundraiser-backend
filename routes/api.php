@@ -161,6 +161,7 @@ Route::prefix('campaigns')->group(function () {
     Route::get('/', [CampaignController::class, 'index']);
     Route::get('/search', [CampaignController::class, 'search']);
     Route::get('/{slug}', [CampaignController::class, 'show']);
+    Route::get('/{id}/donations', [CampaignController::class, 'donations']);
 });
 
 Route::prefix('campaign-updates')->group(function () {

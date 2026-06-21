@@ -7,6 +7,7 @@ use App\Http\Requests\Api\StoreCampaignRequest;
 use App\Http\Requests\Api\UpdateCampaignRequest;
 use App\Http\Requests\Api\VerifyCampaignRequest;
 use App\Http\Resources\CampaignResource;
+use App\Http\Resources\DonationResource;
 use App\Services\Interfaces\CampaignServiceInterface;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -214,5 +215,24 @@ class CampaignController extends Controller
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }
+    }
+
+    /**
+     * Display paginated list of successful donations of a campaign.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function donations(Request $request, int $id): JsonResponse
+    {
+        $perPage = $request->query('per_page', 5);
+        $donations = \App\Models\Donation::where('campaign_id', $id)
+            ->where('status', 'success')
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
+        return $this->successWithPagination(DonationResource::collection($donations), 'Campaign donations retrieved successfully');
     }
 }
