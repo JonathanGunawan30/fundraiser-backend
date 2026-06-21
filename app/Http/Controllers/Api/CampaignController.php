@@ -40,8 +40,9 @@ class CampaignController extends Controller
             $status = $request->query('status');
             $campaigns = $this->campaignService->getAdminCampaigns($perPage, $status);
         } else {
+            $categorySlug = $request->query('category');
             // Public view only shows active campaigns (handled by repository)
-            $campaigns = $this->campaignService->getAllCampaigns($perPage);
+            $campaigns = $this->campaignService->getAllCampaigns($perPage, $categorySlug);
         }
 
         return $this->successWithPagination(CampaignResource::collection($campaigns), 'Campaigns retrieved successfully');
@@ -185,8 +186,9 @@ class CampaignController extends Controller
     {
         $keyword = $request->query('keyword', '');
         $perPage = $request->query('per_page', 10);
+        $categorySlug = $request->query('category');
         
-        $campaigns = $this->campaignService->searchCampaigns($keyword, $perPage);
+        $campaigns = $this->campaignService->searchCampaigns($keyword, $perPage, $categorySlug);
 
         return $this->successWithPagination(CampaignResource::collection($campaigns), 'Campaigns search results retrieved successfully');
     }

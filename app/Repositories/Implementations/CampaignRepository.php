@@ -11,11 +11,18 @@ class CampaignRepository implements CampaignRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function getAllPaginated(int $perPage): LengthAwarePaginator
+    public function getAllPaginated(int $perPage, ?string $categorySlug = null): LengthAwarePaginator
     {
-        return Campaign::with(['user', 'category'])
-            ->where('status', 'active')
-            ->orderBy('created_at', 'desc')
+        $query = Campaign::with(['user', 'category'])
+            ->where('status', 'active');
+
+        if ($categorySlug) {
+            $query->whereHas('category', function ($q) use ($categorySlug) {
+                $q->where('slug', $categorySlug);
+            });
+        }
+
+        return $query->orderBy('created_at', 'desc')
             ->paginate($perPage);
     }
 
@@ -68,15 +75,22 @@ class CampaignRepository implements CampaignRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function search(string $keyword, int $perPage): LengthAwarePaginator
+    public function search(string $keyword, int $perPage, ?string $categorySlug = null): LengthAwarePaginator
     {
-        return Campaign::with(['user', 'category'])
+        $query = Campaign::with(['user', 'category'])
             ->where('status', 'active')
-            ->where(function ($query) use ($keyword) {
-                $query->where('title', 'like', "%{$keyword}%")
+            ->where(function ($q) use ($keyword) {
+                $q->where('title', 'like', "%{$keyword}%")
                     ->orWhere('slug', 'like', "%{$keyword}%");
-            })
-            ->orderBy('created_at', 'desc')
+            });
+
+        if ($categorySlug) {
+            $query->whereHas('category', function ($q) use ($categorySlug) {
+                $q->where('slug', $categorySlug);
+            });
+        }
+
+        return $query->orderBy('created_at', 'desc')
             ->paginate($perPage);
     }
 

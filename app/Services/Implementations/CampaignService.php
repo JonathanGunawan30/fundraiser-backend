@@ -24,9 +24,9 @@ class CampaignService implements CampaignServiceInterface
     /**
      * @inheritDoc
      */
-    public function getAllCampaigns(int $perPage): LengthAwarePaginator
+    public function getAllCampaigns(int $perPage, ?string $categorySlug = null): LengthAwarePaginator
     {
-        return $this->campaignRepository->getAllPaginated($perPage);
+        return $this->campaignRepository->getAllPaginated($perPage, $categorySlug);
     }
 
     /**
@@ -76,9 +76,9 @@ class CampaignService implements CampaignServiceInterface
     /**
      * @inheritDoc
      */
-    public function searchCampaigns(string $keyword, int $perPage): LengthAwarePaginator
+    public function searchCampaigns(string $keyword, int $perPage, ?string $categorySlug = null): LengthAwarePaginator
     {
-        return $this->campaignRepository->search($keyword, $perPage);
+        return $this->campaignRepository->search($keyword, $perPage, $categorySlug);
     }
 
     /**

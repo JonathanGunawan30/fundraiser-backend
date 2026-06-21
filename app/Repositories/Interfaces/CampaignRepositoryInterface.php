@@ -11,9 +11,10 @@ interface CampaignRepositoryInterface
      * Get all campaigns paginated.
      *
      * @param int $perPage
+     * @param string|null $categorySlug
      * @return LengthAwarePaginator
      */
-    public function getAllPaginated(int $perPage): LengthAwarePaginator;
+    public function getAllPaginated(int $perPage, ?string $categorySlug = null): LengthAwarePaginator;
 
     /**
      * Get user campaigns paginated.
@@ -54,9 +55,10 @@ interface CampaignRepositoryInterface
      *
      * @param string $keyword
      * @param int $perPage
+     * @param string|null $categorySlug
      * @return LengthAwarePaginator
      */
-    public function search(string $keyword, int $perPage): LengthAwarePaginator;
+    public function search(string $keyword, int $perPage, ?string $categorySlug = null): LengthAwarePaginator;
 
     /**
      * Create a new campaign.
