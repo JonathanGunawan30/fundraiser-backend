@@ -100,6 +100,14 @@ Route::prefix('admin')->middleware('auth:admin-api')->group(function () {
 
     // Withdrawal Processing
     Route::post('withdrawals/{id}/process', [WithdrawalController::class, 'process']);
+
+    // Admin Notifications (ponytail: implement endpoints for admin)
+    Route::prefix('notifications')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\AdminNotificationController::class, 'index']);
+        Route::get('/unread', [\App\Http\Controllers\Api\AdminNotificationController::class, 'unread']);
+        Route::patch('/{id}/read', [\App\Http\Controllers\Api\AdminNotificationController::class, 'markAsRead']);
+        Route::post('/read-all', [\App\Http\Controllers\Api\AdminNotificationController::class, 'markAllAsRead']);
+    });
 });
 
 // User Auth Routes

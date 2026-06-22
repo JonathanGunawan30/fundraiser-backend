@@ -85,7 +85,15 @@ class WithdrawalService implements WithdrawalServiceInterface
             }
 
             $data['status'] = 'pending';
-            return $this->withdrawalRepository->create($data);
+            $withdrawal = $this->withdrawalRepository->create($data);
+
+            // ponytail: notify active admins of new withdrawal request
+            $admins = \App\Models\Admin::where('is_active', true)->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new \App\Notifications\WithdrawalRequestedNotification($withdrawal));
+            }
+
+            return $withdrawal;
         });
     }
 
