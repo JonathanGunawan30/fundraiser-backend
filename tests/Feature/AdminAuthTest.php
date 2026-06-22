@@ -6,6 +6,7 @@ use App\Models\Admin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Http;
 use App\Mail\AdminOtpMail;
 use Tests\TestCase;
 
@@ -18,6 +19,10 @@ class AdminAuthTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Http::fake([
+            'challenges.cloudflare.com/*' => Http::response(['success' => true], 200),
+        ]);
 
         $this->admin = Admin::create([
             'name' => 'Admin Test',
@@ -36,24 +41,40 @@ class AdminAuthTest extends TestCase
                 return $key === 'otp:admin@example.com' && $ttl === 300 && strlen($value) === 6;
             });
 
-        $response = $this->postJson('/api/auth/otp', [
+        // Mock Resend API call
+        $resendEmailsMock = \Mockery::mock();
+        $resendEmailsMock->shouldReceive('send')->once();
+        \Resend\Laravel\Facades\Resend::shouldReceive('emails')->andReturn($resendEmailsMock);
+
+        $response = $this->postJson('/api/admin/otp', [
             'email' => 'admin@example.com',
+            'cf_turnstile_response' => 'test-token',
         ]);
 
         $response->assertStatus(200)
             ->assertJson([
                 'message' => 'OTP sent successfully to your email',
             ]);
-
-        Mail::assertSent(AdminOtpMail::class, function ($mail) {
-            return $mail->hasTo('admin@example.com');
-        });
     }
 
-    public function test_admin_cannot_request_otp_with_invalid_email()
+    public function test_admin_request_otp_with_nonfound_email_returns_success()
     {
-        $response = $this->postJson('/api/auth/otp', [
+        $response = $this->postJson('/api/admin/otp', [
             'email' => 'notfound@example.com',
+            'cf_turnstile_response' => 'test-token',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'OTP sent successfully to your email',
+            ]);
+    }
+
+    public function test_admin_cannot_request_otp_with_invalid_format_email()
+    {
+        $response = $this->postJson('/api/admin/otp', [
+            'email' => 'invalid-email-format',
+            'cf_turnstile_response' => 'test-token',
         ]);
 
         $response->assertStatus(422)
@@ -71,7 +92,7 @@ class AdminAuthTest extends TestCase
             ->once()
             ->with('otp:admin@example.com');
 
-        $response = $this->postJson('/api/auth/login', [
+        $response = $this->postJson('/api/admin/login', [
             'email' => 'admin@example.com',
             'otp' => '123456',
         ]);
@@ -93,7 +114,7 @@ class AdminAuthTest extends TestCase
             ->with('otp:admin@example.com')
             ->andReturn('123456');
 
-        $response = $this->postJson('/api/auth/login', [
+        $response = $this->postJson('/api/admin/login', [
             'email' => 'admin@example.com',
             'otp' => '000000',
         ]);
@@ -111,7 +132,7 @@ class AdminAuthTest extends TestCase
             ->with('otp:admin@example.com')
             ->andReturn(null);
 
-        $response = $this->postJson('/api/auth/login', [
+        $response = $this->postJson('/api/admin/login', [
             'email' => 'admin@example.com',
             'otp' => '123456',
         ]);

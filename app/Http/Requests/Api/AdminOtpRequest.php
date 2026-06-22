@@ -15,7 +15,7 @@ class AdminOtpRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email|exists:admins,email',
+            'email' => 'required|email',
             'cf_turnstile_response' => ['required', new Turnstile],
         ];
     }
@@ -27,8 +27,6 @@ class AdminOtpRequest extends BaseRequest
      */
     public function messages(): array
     {
-        return [
-            'email.exists' => 'Admin account with this email not found.',
-        ];
+        return [];
     }
 }
