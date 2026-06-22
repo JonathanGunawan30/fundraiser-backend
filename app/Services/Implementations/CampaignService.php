@@ -120,6 +120,14 @@ class CampaignService implements CampaignServiceInterface
                 $this->campaignImageRepository->createMany($campaign->id, $imagesData);
             }
 
+            // ponytail: notify admins if the status is pending/submitted for review (or notify by default when campaign is first submitted/created if relevant, but let's notify when a campaign is submitted. Usually a campaign starts as pending or draft. Let's see if campaign gets submitted. Actually, if status is 'pending', we notify active admins).
+            if ($campaign->status === 'pending') {
+                $admins = \App\Models\Admin::where('is_active', true)->get();
+                foreach ($admins as $admin) {
+                    $admin->notify(new \App\Notifications\CampaignSubmittedNotification($campaign));
+                }
+            }
+
             return $campaign;
         });
     }
@@ -178,6 +186,14 @@ class CampaignService implements CampaignServiceInterface
                     }
                 }
                 $this->campaignImageRepository->createMany($campaign->id, $imagesData);
+            }
+
+            // ponytail: notify admins if status is updated to pending (meaning submitted for review)
+            if (isset($data['status']) && $data['status'] === 'pending') {
+                $admins = \App\Models\Admin::where('is_active', true)->get();
+                foreach ($admins as $admin) {
+                    $admin->notify(new \App\Notifications\CampaignSubmittedNotification($campaign));
+                }
             }
 
             return $campaign;
