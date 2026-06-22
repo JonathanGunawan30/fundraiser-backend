@@ -65,14 +65,9 @@ class AuthService implements AuthServiceInterface
     {
         $admin = $this->authRepository->findAdminByEmail($data['email']);
 
-        if (!$admin) {
-            // We return early to avoid email enumeration, but in some cases you might want to return an error.
-            // However, based on the requirements, we'll just check if admin exists.
-            abort(404, 'Admin not found.');
-        }
-
-        if (!$admin->is_active) {
-            abort(401, 'Account is inactive.');
+        if (!$admin || !$admin->is_active) {
+            // Return early to prevent email enumeration
+            return;
         }
 
         $otp = (string) rand(100000, 999999);
