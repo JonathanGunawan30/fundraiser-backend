@@ -12,5 +12,5 @@ interface DashboardServiceInterface
     /**
      * Get full user dashboard data.
      */
-    public function getUserDashboardData(int $userId): array;
+    public function getUserDashboardData(int $userId, ?int $days = null): array;
 }

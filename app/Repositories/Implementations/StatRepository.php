@@ -22,20 +22,28 @@ class StatRepository implements StatRepositoryInterface
         ];
     }
 
-    public function getUserStats(int $userId): array
+    public function getUserStats(int $userId, ?int $days = null): array
     {
         $campaignIds = Campaign::where('user_id', $userId)->pluck('id');
 
+        $raisedQuery = Donation::whereIn('campaign_id', $campaignIds)->where('status', 'success');
+        $donationsQuery = Donation::where('user_id', $userId)->where('status', 'success');
+
+        if ($days) {
+            $dateLimit = now()->subDays($days);
+            $raisedQuery->where('created_at', '>=', $dateLimit);
+            $donationsQuery->where('created_at', '>=', $dateLimit);
+        }
+
+        $raisedSum = (int) $raisedQuery->sum('amount');
+
         return [
-            'total_raised_amount' => (int) Donation::whereIn('campaign_id', $campaignIds)
-                ->where('status', 'success')
-                ->sum('amount'),
-            'total_donors_count' => Donation::whereIn('campaign_id', $campaignIds)
-                ->where('status', 'success')
-                ->count(),
-            'active_campaigns_count' => Campaign::where('user_id', $userId)
-                ->where('status', 'active')
-                ->count(),
+            'total_raised_amount' => $raisedSum,
+            'total_collected_amount' => $raisedSum,
+            'total_donors_count' => $raisedQuery->count(),
+            'active_campaigns_count' => Campaign::where('user_id', $userId)->where('status', 'active')->count(),
+            'total_donations' => $donationsQuery->count(),
+            'total_donated_amount' => (int) $donationsQuery->sum('amount'),
         ];
     }
 

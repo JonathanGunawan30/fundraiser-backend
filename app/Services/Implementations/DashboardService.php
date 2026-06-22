@@ -38,9 +38,9 @@ class DashboardService implements DashboardServiceInterface
         ];
     }
 
-    public function getUserDashboardData(int $userId): array
+    public function getUserDashboardData(int $userId, ?int $days = null): array
     {
-        $stats = $this->statRepository->getUserStats($userId);
+        $stats = $this->statRepository->getUserStats($userId, $days);
         
         return [
             'overview' => $stats,
