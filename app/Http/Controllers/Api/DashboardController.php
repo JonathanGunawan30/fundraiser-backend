@@ -28,10 +28,13 @@ class DashboardController extends Controller
     /**
      * Get dashboard data for authenticated user.
      */
-    public function userIndex(): JsonResponse
+    public function userIndex(\Illuminate\Http\Request $request): JsonResponse
     {
         $userId = Auth::id();
-        $data = $this->dashboardService->getUserDashboardData($userId);
+        $days = $request->query('days');
+        $daysVal = ($days === 'all' || !$days) ? null : (int) $days;
+        
+        $data = $this->dashboardService->getUserDashboardData($userId, $daysVal);
         return $this->success($data, 'User dashboard statistics retrieved successfully');
     }
 }

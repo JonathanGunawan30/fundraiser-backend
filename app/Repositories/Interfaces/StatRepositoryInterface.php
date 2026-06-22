@@ -12,7 +12,7 @@ interface StatRepositoryInterface
     /**
      * Get donation stats for a user (as creator).
      */
-    public function getUserStats(int $userId): array;
+    public function getUserStats(int $userId, ?int $days = null): array;
 
     /**
      * Get donation chart data (daily sums) for a period.
