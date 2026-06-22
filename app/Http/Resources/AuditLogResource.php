@@ -9,6 +9,23 @@ class AuditLogResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $properties = $this->properties;
+        
+        // spatie/laravel-activitylog v5 stores model attribute changes in attribute_changes.
+        // If properties is empty, fall back to attribute_changes.
+        if (
+            ($properties === null || 
+            (is_countable($properties) && count($properties) === 0) || 
+            (method_exists($properties, 'isEmpty') && $properties->isEmpty())) && 
+            !empty($this->attribute_changes)
+        ) {
+            $attributeChanges = $this->attribute_changes;
+            if (is_string($attributeChanges)) {
+                $attributeChanges = json_decode($attributeChanges, true);
+            }
+            $properties = $attributeChanges;
+        }
+
         return [
             'id' => $this->id,
             'log_name' => $this->log_name,
@@ -20,7 +37,7 @@ class AuditLogResource extends JsonResource
                 'name' => $this->causer->name,
                 'type' => basename(str_replace('\\', '/', $this->causer_type)),
             ] : null,
-            'properties' => $this->properties,
+            'properties' => $properties,
             'created_at' => $this->created_at->toDateTimeString(),
         ];
     }
