@@ -1,7 +1,7 @@
 {
     frankenphp {
         worker {
-            file /var/www/public/index.php
+            file /var/www/public/frankenphp-worker.php
             num 4
         }
     }
