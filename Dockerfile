@@ -20,7 +20,7 @@ COPY . .
 
 COPY docker/certs/aiven-ca.pem /etc/ssl/certs/aiven-ca.pem
 
-COPY Caddyfile /etc/caddy/Caddyfile
+COPY Caddyfile /etc/frankenphp/Caddyfile
 
 RUN mkdir -p database && touch database/database.sqlite
 
