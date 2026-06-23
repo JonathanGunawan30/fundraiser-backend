@@ -1,46 +1,17 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${DOCKER_IMAGE}
     container_name: fundraiser-app
     restart: unless-stopped
-    working_dir: /var/www
-    command: php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8000 --watch
-    volumes:
-      - .:/var/www
+    env_file:
+      - .env
     ports:
-      - "8000:8000"
-      - "8080:8080"
+      - "80:80"
+      - "443:443"
     networks:
       - fundraiser-network
     depends_on:
-      - db
-      - redis
       - rabbitmq
-
-  db:
-    image: mysql:8.0
-    container_name: fundraiser-db
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_USER: ${DB_USERNAME}
-    volumes:
-      - dbdata:/var/lib/mysql
-    ports:
-      - "3308:3306"
-    networks:
-      - fundraiser-network
-
-  redis:
-    image: redis:alpine
-    container_name: fundraiser-redis
-    restart: unless-stopped
-    networks:
-      - fundraiser-network
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -50,21 +21,18 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     networks:
       - fundraiser-network
 
   queue-worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${DOCKER_IMAGE}
     container_name: fundraiser-queue-worker
     restart: unless-stopped
-    working_dir: /var/www
-    command: php artisan queue:work --tries=3
-    volumes:
-      - .:/var/www
+    env_file:
+      - .env
+    entrypoint: ["php", "artisan", "queue:work", "--tries=3"]
     networks:
       - fundraiser-network
     depends_on:
@@ -73,6 +41,3 @@ services:
 networks:
   fundraiser-network:
     driver: bridge
-
-volumes:
-  dbdata:

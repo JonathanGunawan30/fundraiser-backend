@@ -18,6 +18,15 @@ WORKDIR /var/www
 
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader
+COPY docker/certs/aiven-ca.pem /etc/ssl/certs/aiven-ca.pem
+
+COPY Caddyfile /etc/caddy/Caddyfile
+
+RUN composer install --no-dev --optimize-autoloader \
+    && php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
 
 RUN chown -R www-data:www-data /var/www
+
+EXPOSE 80 443

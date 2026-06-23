@@ -27,3 +27,5 @@ Thumbs.db
 **/caddy
 frankenphp
 frankenphp-worker.php
+
+docker/certs/*.pem
