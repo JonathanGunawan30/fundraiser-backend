@@ -22,7 +22,7 @@ class SendAdminOtpJob implements ShouldQueue
     public function handle(): void
     {
         Resend::emails()->send([
-            'from' => 'Fundraiser <onboarding@resend.dev>',
+            'from' => config('mail.from.name', 'Fundraiser') . ' <' . config('mail.from.address', 'onboarding@resend.dev') . '>',
             'to' => $this->email,
             'subject' => 'Admin Login OTP',
             'html' => View::make('emails.admin-otp', ['otp' => $this->otp])->render(),

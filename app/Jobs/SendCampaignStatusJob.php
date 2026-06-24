@@ -32,7 +32,7 @@ class SendCampaignStatusJob implements ShouldQueue
         $statusLabel = $this->status === 'approved' ? 'Disetujui' : 'Ditolak';
 
         Resend::emails()->send([
-            'from' => 'Fundraiser <onboarding@resend.dev>',
+            'from' => config('mail.from.name', 'Fundraiser') . ' <' . config('mail.from.address', 'onboarding@resend.dev') . '>',
             'to' => $this->email,
             'subject' => 'Update Status Campaign: ' . $this->campaignTitle,
             'html' => View::make('emails.campaign-status', [
