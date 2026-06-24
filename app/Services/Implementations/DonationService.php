@@ -122,7 +122,7 @@ class DonationService implements DonationServiceInterface
             }
 
             Log::info('Midtrans notification handled successfully', [
-                'donation_number' => $orderId,
+                'donation_number' => $donation->donation_number,
                 'transaction_status' => $status,
                 'payment_type' => $type,
                 'determined_donation_status' => $donationStatus
