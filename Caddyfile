@@ -1,7 +1,8 @@
 {
+    email admin@fundraiser.my.id
     frankenphp {
         worker {
-            file /var/www/public/frankenphp-worker.php
+            file /var/www/public/index.php
             num 4
         }
     }
