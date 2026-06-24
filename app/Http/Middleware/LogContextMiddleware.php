@@ -33,19 +33,8 @@ class LogContextMiddleware
         // Add the Request ID to the response headers for tracing
         $response->headers->set('X-Request-ID', $requestId);
 
-        return $response;
-    }
-
-    /**
-     * Handle tasks after the response has been sent to the browser.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  mixed  $response
-     * @return void
-     */
-    public function terminate(Request $request, $response)
-    {
-        // Resolve authenticated user if any (checking both API and Admin API guards)
+        // Log the final request outcome within the active request container lifecycle
+        // This ensures the shared logging context is captured before state reset in Octane
         $userId = auth('api')->id() ?? auth('admin-api')->id() ?? 'guest';
         $userRole = auth('api')->check() ? 'user' : (auth('admin-api')->check() ? 'admin' : 'guest');
 
@@ -65,5 +54,19 @@ class LogContextMiddleware
             'execution_time_ms' => round((microtime(true) - LARAVEL_START) * 1000),
             'input' => $input,
         ]);
+
+        return $response;
+    }
+
+    /**
+     * Handle tasks after the response has been sent to the browser.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $response
+     * @return void
+     */
+    public function terminate(Request $request, $response)
+    {
+        // No-op: logging is handled in the handle method to prevent Octane context reset
     }
 }
