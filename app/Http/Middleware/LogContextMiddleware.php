@@ -21,7 +21,7 @@ class LogContextMiddleware
         $requestId = (string) Str::uuid();
 
         // Share the request ID and basic context with all logs in this lifecycle
-        Log::share([
+        Log::withContext([
             'request_id' => $requestId,
             'ip' => $request->ip(),
             'method' => $request->method(),
