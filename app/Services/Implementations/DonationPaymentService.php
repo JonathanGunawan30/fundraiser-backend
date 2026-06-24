@@ -7,6 +7,7 @@ use App\Repositories\Interfaces\DonationPaymentRepositoryInterface;
 use App\Services\Interfaces\DonationPaymentServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class DonationPaymentService implements DonationPaymentServiceInterface
 {
@@ -33,6 +34,7 @@ class DonationPaymentService implements DonationPaymentServiceInterface
         $donationPayment = $this->donationPaymentRepository->findById($id);
 
         if (!$donationPayment) {
+            Log::warning('Donation payment lookup failed: Payment not found', ['donation_payment_id' => $id]);
             throw new ModelNotFoundException("Donation payment with ID {$id} not found.");
         }
 

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use App\Models\Campaign;
+use Illuminate\Support\Facades\Log;
 
 class CampaignUpdateService implements CampaignUpdateServiceInterface
 {
@@ -38,6 +39,7 @@ class CampaignUpdateService implements CampaignUpdateServiceInterface
         $update = $this->updateRepository->findById($id);
 
         if (!$update) {
+            Log::warning('Campaign update lookup failed: Update not found', ['update_id' => $id]);
             throw new ModelNotFoundException("Campaign update with ID {$id} not found.");
         }
 
@@ -61,6 +63,11 @@ class CampaignUpdateService implements CampaignUpdateServiceInterface
         // but we verify here for safety.
         $campaign = Campaign::findOrFail($data['campaign_id']);
         if ($campaign->user_id !== $data['user_id']) {
+            Log::warning('Campaign update creation unauthorized', [
+                'campaign_id' => $data['campaign_id'],
+                'user_id' => $data['user_id'],
+                'campaign_owner_id' => $campaign->user_id,
+            ]);
             throw new \RuntimeException("You are not authorized to post updates for this campaign.", 403);
         }
 
@@ -69,7 +76,15 @@ class CampaignUpdateService implements CampaignUpdateServiceInterface
             unset($data['image']);
         }
 
-        return $this->updateRepository->create($data);
+        $update = $this->updateRepository->create($data);
+
+        Log::info('Campaign update created successfully', [
+            'update_id' => $update->id,
+            'campaign_id' => $update->campaign_id,
+            'title' => $update->title,
+        ]);
+
+        return $update;
     }
 
     /**
@@ -80,6 +95,11 @@ class CampaignUpdateService implements CampaignUpdateServiceInterface
         $update = $this->getUpdateById($id);
 
         if ($update->user_id !== $userId) {
+            Log::warning('Campaign update edit unauthorized', [
+                'update_id' => $id,
+                'user_id' => $userId,
+                'update_owner_id' => $update->user_id,
+            ]);
             throw new \RuntimeException("You are not authorized to edit this update.", 403);
         }
 
@@ -91,7 +111,15 @@ class CampaignUpdateService implements CampaignUpdateServiceInterface
             unset($data['image']);
         }
 
-        return $this->updateRepository->update($id, $data);
+        $updatedUpdate = $this->updateRepository->update($id, $data);
+
+        Log::info('Campaign update modified successfully', [
+            'update_id' => $id,
+            'campaign_id' => $updatedUpdate->campaign_id,
+            'title' => $updatedUpdate->title,
+        ]);
+
+        return $updatedUpdate;
     }
 
     /**
@@ -102,12 +130,22 @@ class CampaignUpdateService implements CampaignUpdateServiceInterface
         $update = $this->getUpdateById($id);
 
         if ($update->user_id !== $userId) {
+            Log::warning('Campaign update deletion unauthorized', [
+                'update_id' => $id,
+                'user_id' => $userId,
+                'update_owner_id' => $update->user_id,
+            ]);
             throw new \RuntimeException("You are not authorized to delete this update.", 403);
         }
 
         if ($update->image_url) {
             $this->deleteFromR2($update->image_url);
         }
+
+        Log::info('Campaign update deleted successfully', [
+            'update_id' => $id,
+            'campaign_id' => $update->campaign_id,
+        ]);
 
         return $this->updateRepository->delete($id);
     }

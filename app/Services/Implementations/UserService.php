@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class UserService implements UserServiceInterface
 {
@@ -36,6 +37,7 @@ class UserService implements UserServiceInterface
         $user = $this->userRepository->findById($id);
 
         if (!$user) {
+            Log::warning('User lookup failed: User not found', ['user_id' => $id]);
             throw new ModelNotFoundException("User with ID {$id} not found.");
         }
 
@@ -69,7 +71,15 @@ class UserService implements UserServiceInterface
             unset($data['avatar']);
         }
 
-        return $this->userRepository->update($id, $data);
+        $updatedUser = $this->userRepository->update($id, $data);
+
+        Log::info('User profile updated successfully', [
+            'user_id' => $updatedUser->id,
+            'name' => $updatedUser->name,
+            'email' => $updatedUser->email,
+        ]);
+
+        return $updatedUser;
     }
 
     /**

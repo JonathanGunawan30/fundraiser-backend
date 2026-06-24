@@ -6,6 +6,7 @@ use App\Models\Donation;
 use App\Models\User;
 use Midtrans\Config;
 use Midtrans\Snap;
+use Illuminate\Support\Facades\Log;
 
 class MidtransService
 {
@@ -22,6 +23,12 @@ class MidtransService
      */
     public function createSnapToken(Donation $donation, ?User $user = null): object
     {
+        Log::info('Generating Midtrans Snap Token', [
+            'donation_number' => $donation->donation_number,
+            'amount' => $donation->amount,
+            'user_id' => $user ? $user->id : null,
+        ]);
+
         $params = [
             'transaction_details' => [
                 'order_id' => $donation->donation_number,

@@ -7,6 +7,7 @@ use App\Repositories\Interfaces\BannerPlacementRepositoryInterface;
 use App\Services\Interfaces\BannerPlacementServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class BannerPlacementService implements BannerPlacementServiceInterface
 {
@@ -33,6 +34,7 @@ class BannerPlacementService implements BannerPlacementServiceInterface
         $bannerPlacement = $this->bannerPlacementRepository->findById($id);
 
         if (!$bannerPlacement) {
+            Log::warning('Banner placement lookup failed: Placement not found', ['banner_placement_id' => $id]);
             throw new ModelNotFoundException("Banner Placement with ID {$id} not found.");
         }
 

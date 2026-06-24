@@ -64,6 +64,13 @@ class DonationService implements DonationServiceInterface
                 'status' => 'pending'
             ]);
 
+            Log::info('Donation created successfully, redirect snap URL generated', [
+                'donation_number' => $donation->donation_number,
+                'amount' => $donation->amount,
+                'campaign_id' => $donation->campaign_id,
+                'user_id' => $donation->user_id
+            ]);
+
             return $donation->load('payment');
         });
     }
@@ -113,6 +120,13 @@ class DonationService implements DonationServiceInterface
             if ($donationStatus === 'success') {
                 ProcessSuccessfulDonation::dispatch($donation->id);
             }
+
+            Log::info('Midtrans notification handled successfully', [
+                'donation_number' => $orderId,
+                'transaction_status' => $status,
+                'payment_type' => $type,
+                'determined_donation_status' => $donationStatus
+            ]);
 
             return true;
         });

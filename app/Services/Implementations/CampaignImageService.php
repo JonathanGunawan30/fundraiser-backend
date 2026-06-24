@@ -7,6 +7,7 @@ use App\Repositories\Interfaces\CampaignImageRepositoryInterface;
 use App\Services\Interfaces\CampaignImageServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class CampaignImageService implements CampaignImageServiceInterface
 {
@@ -33,6 +34,7 @@ class CampaignImageService implements CampaignImageServiceInterface
         $image = $this->imageRepository->findById($id);
 
         if (!$image) {
+            Log::warning('Campaign image lookup failed: Image not found', ['image_id' => $id]);
             throw new ModelNotFoundException("Campaign image with ID {$id} not found.");
         }
 

@@ -7,6 +7,7 @@ use App\Repositories\Interfaces\TagRepositoryInterface;
 use App\Services\Interfaces\TagServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class TagService implements TagServiceInterface
 {
@@ -33,6 +34,7 @@ class TagService implements TagServiceInterface
         $tag = $this->tagRepository->findById($id);
 
         if (!$tag) {
+            Log::warning('Tag lookup failed: Tag not found', ['tag_id' => $id]);
             throw new ModelNotFoundException("Tag with ID {$id} not found.");
         }
 
@@ -52,7 +54,15 @@ class TagService implements TagServiceInterface
      */
     public function createTag(array $data): Tag
     {
-        return $this->tagRepository->create($data);
+        $tag = $this->tagRepository->create($data);
+
+        Log::info('Tag created successfully', [
+            'tag_id' => $tag->id,
+            'name' => $tag->name,
+            'slug' => $tag->slug,
+        ]);
+
+        return $tag;
     }
 
     /**
@@ -60,7 +70,15 @@ class TagService implements TagServiceInterface
      */
     public function updateTag(int $id, array $data): Tag
     {
-        return $this->tagRepository->update($id, $data);
+        $tag = $this->tagRepository->update($id, $data);
+
+        Log::info('Tag updated successfully', [
+            'tag_id' => $id,
+            'name' => $tag->name,
+            'slug' => $tag->slug,
+        ]);
+
+        return $tag;
     }
 
     /**
@@ -68,6 +86,8 @@ class TagService implements TagServiceInterface
      */
     public function deleteTag(int $id): bool
     {
+        Log::info('Tag deleted successfully', ['tag_id' => $id]);
+
         return $this->tagRepository->delete($id);
     }
 }

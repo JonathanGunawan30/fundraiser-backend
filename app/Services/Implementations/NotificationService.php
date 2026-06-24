@@ -7,6 +7,7 @@ use App\Repositories\Interfaces\NotificationRepositoryInterface;
 use App\Services\Interfaces\NotificationServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class NotificationService implements NotificationServiceInterface
 {
@@ -33,6 +34,7 @@ class NotificationService implements NotificationServiceInterface
         $notification = $this->notificationRepository->findById($id);
 
         if (!$notification) {
+            Log::warning('Notification lookup failed: Notification not found', ['notification_id' => $id]);
             throw new ModelNotFoundException("Notification with ID {$id} not found.");
         }
 

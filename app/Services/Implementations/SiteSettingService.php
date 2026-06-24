@@ -7,6 +7,7 @@ use App\Repositories\Interfaces\SiteSettingRepositoryInterface;
 use App\Services\Interfaces\SiteSettingServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class SiteSettingService implements SiteSettingServiceInterface
 {
@@ -52,7 +53,9 @@ class SiteSettingService implements SiteSettingServiceInterface
      */
     public function createSiteSetting(array $data): SiteSetting
     {
-        return $this->siteSettingRepository->create($data);
+        $siteSetting = $this->siteSettingRepository->create($data);
+        Log::info('Site setting created', ['key' => $siteSetting->key, 'value' => $siteSetting->value]);
+        return $siteSetting;
     }
 
     /**
@@ -60,7 +63,9 @@ class SiteSettingService implements SiteSettingServiceInterface
      */
     public function updateSiteSetting(int $id, array $data): SiteSetting
     {
-        return $this->siteSettingRepository->update($id, $data);
+        $siteSetting = $this->siteSettingRepository->update($id, $data);
+        Log::info('Site setting updated', ['setting_id' => $id, 'key' => $siteSetting->key, 'value' => $siteSetting->value]);
+        return $siteSetting;
     }
 
     /**
@@ -68,6 +73,7 @@ class SiteSettingService implements SiteSettingServiceInterface
      */
     public function deleteSiteSetting(int $id): bool
     {
+        Log::info('Site setting deleted', ['setting_id' => $id]);
         return $this->siteSettingRepository->delete($id);
     }
 }

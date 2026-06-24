@@ -14,6 +14,7 @@ use Resend\Laravel\Facades\Resend;
 use Illuminate\Support\Facades\Redis;
 use App\Mail\AdminOtpMail;
 use App\Jobs\SendAdminOtpJob;
+use Illuminate\Support\Facades\Log;
 
 class AuthService implements AuthServiceInterface
 {
@@ -32,16 +33,19 @@ class AuthService implements AuthServiceInterface
         $admin = $this->authRepository->findAdminByEmail($credentials['email']);
 
         if (!$admin) {
+            Log::warning('Admin login failed: Email not registered', ['email' => $credentials['email']]);
             abort(401, 'Invalid credentials.');
         }
 
         if (!$admin->is_active) {
+            Log::warning('Admin login failed: Account is inactive', ['email' => $credentials['email'], 'admin_id' => $admin->id]);
             abort(401, 'Account is inactive.');
         }
 
         $otp = Redis::get('otp:' . $credentials['email']);
 
         if (!$otp || $otp !== $credentials['otp']) {
+            Log::warning('Admin login failed: Invalid or expired OTP', ['email' => $credentials['email'], 'admin_id' => $admin->id]);
             abort(422, 'Invalid or expired OTP.');
         }
 
@@ -51,6 +55,8 @@ class AuthService implements AuthServiceInterface
         $this->authRepository->updateAdminLastLogin($admin);
 
         $token = Auth::guard('admin-api')->login($admin);
+
+        Log::info('Admin login successful', ['admin_id' => $admin->id, 'email' => $admin->email]);
 
         return [
             'admin' => $admin,
@@ -66,6 +72,7 @@ class AuthService implements AuthServiceInterface
         $admin = $this->authRepository->findAdminByEmail($data['email']);
 
         if (!$admin || !$admin->is_active) {
+            Log::warning('Admin OTP request failed: Email not registered or inactive', ['email' => $data['email']]);
             // Return early to prevent email enumeration
             return;
         }
@@ -77,6 +84,8 @@ class AuthService implements AuthServiceInterface
 
         // Send OTP via email
         SendAdminOtpJob::dispatch($admin->email, $otp);
+
+        Log::info('Admin OTP generated and sent successfully', ['email' => $data['email'], 'admin_id' => $admin->id]);
     }
 
     /**
@@ -99,6 +108,12 @@ class AuthService implements AuthServiceInterface
 
         $token = Auth::guard('api')->login($user);
 
+        Log::info('User social login successful', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'provider' => $provider
+        ]);
+
         return [
             'user' => $user,
             'token' => $token,
@@ -110,6 +125,10 @@ class AuthService implements AuthServiceInterface
      */
     public function logout(): void
     {
+        $user = Auth::user();
+        if ($user) {
+            Log::info('User logged out', ['user_id' => $user->id, 'role' => Auth::getDefaultDriver()]);
+        }
         Auth::logout();
     }
 }
