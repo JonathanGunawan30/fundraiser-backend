@@ -8,6 +8,9 @@
 }
 
 api.fundraiser.my.id {
+    tls {
+        ca https://acme.zerossl.com/v2/DV90
+    }
     root * /var/www/public
     encode zstd br gzip
     php_server

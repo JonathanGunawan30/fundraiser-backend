@@ -8,6 +8,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
     networks:
       - fundraiser-network
     depends_on:
@@ -41,3 +44,7 @@ services:
 networks:
   fundraiser-network:
     driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
