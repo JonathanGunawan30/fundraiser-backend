@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (app()->bound('log')) {
+            app('log')->pushProcessor(new \App\Logging\Processors\MaskSensitiveDataProcessor());
+        }
     }
 }

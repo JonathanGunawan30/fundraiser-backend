@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class CampaignCategoryService implements CampaignCategoryServiceInterface
 {
@@ -36,6 +37,7 @@ class CampaignCategoryService implements CampaignCategoryServiceInterface
         $category = $this->categoryRepository->findById($id);
 
         if (!$category) {
+            Log::warning('Campaign category lookup failed: Category not found', ['category_id' => $id]);
             throw new ModelNotFoundException("Campaign category with ID {$id} not found.");
         }
 
@@ -62,7 +64,15 @@ class CampaignCategoryService implements CampaignCategoryServiceInterface
             unset($data['icon']);
         }
 
-        return $this->categoryRepository->create($data);
+        $category = $this->categoryRepository->create($data);
+
+        Log::info('Campaign category created successfully', [
+            'category_id' => $category->id,
+            'name' => $category->name,
+            'slug' => $category->slug,
+        ]);
+
+        return $category;
     }
 
     /**
@@ -82,7 +92,15 @@ class CampaignCategoryService implements CampaignCategoryServiceInterface
             unset($data['icon']);
         }
 
-        return $this->categoryRepository->update($id, $data);
+        $updatedCategory = $this->categoryRepository->update($id, $data);
+
+        Log::info('Campaign category updated successfully', [
+            'category_id' => $id,
+            'name' => $updatedCategory->name,
+            'slug' => $updatedCategory->slug,
+        ]);
+
+        return $updatedCategory;
     }
 
     /**
@@ -94,6 +112,8 @@ class CampaignCategoryService implements CampaignCategoryServiceInterface
         if ($category->icon_url) {
             $this->deleteFileFromR2($category->icon_url);
         }
+
+        Log::info('Campaign category deleted successfully', ['category_id' => $id, 'name' => $category->name]);
 
         return $this->categoryRepository->delete($id);
     }

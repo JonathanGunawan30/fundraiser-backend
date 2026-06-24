@@ -65,6 +65,15 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'logtail' => [
+            'driver' => 'monolog',
+            'level' => env('LOG_LEVEL', 'debug'),
+            'handler' => Logtail\Monolog\LogtailHandler::class,
+            'with' => [
+                'sourceToken' => env('LOGTAIL_SOURCE_TOKEN'),
+            ],
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),

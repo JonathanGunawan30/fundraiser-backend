@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class AdminService implements AdminServiceInterface
 {
@@ -36,6 +37,7 @@ class AdminService implements AdminServiceInterface
         $admin = $this->adminRepository->findById($id);
 
         if (!$admin) {
+            Log::warning('Admin lookup failed: Admin not found', ['admin_id' => $id]);
             throw new ModelNotFoundException("Admin with ID {$id} not found.");
         }
 
@@ -68,7 +70,15 @@ class AdminService implements AdminServiceInterface
             unset($data['avatar']);
         }
 
-        return $this->adminRepository->update($admin, $data);
+        $updatedAdmin = $this->adminRepository->update($admin, $data);
+
+        Log::info('Admin profile updated', [
+            'admin_id' => $updatedAdmin->id,
+            'email' => $updatedAdmin->email,
+            'name' => $updatedAdmin->name,
+        ]);
+
+        return $updatedAdmin;
     }
 
     /**
@@ -79,6 +89,7 @@ class AdminService implements AdminServiceInterface
         $admin = $this->getAdminById($id);
 
         if (!Hash::check($currentPassword, $admin->password)) {
+            Log::warning('Admin password update failed: current password incorrect', ['admin_id' => $id]);
             throw ValidationException::withMessages([
                 'current_password' => ['The provided password does not match your current password.'],
             ]);
@@ -87,6 +98,8 @@ class AdminService implements AdminServiceInterface
         $this->adminRepository->update($admin, [
             'password' => Hash::make($newPassword),
         ]);
+
+        Log::info('Admin password updated successfully', ['admin_id' => $id]);
 
         return true;
     }

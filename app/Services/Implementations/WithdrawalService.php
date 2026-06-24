@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class WithdrawalService implements WithdrawalServiceInterface
 {
@@ -93,6 +94,13 @@ class WithdrawalService implements WithdrawalServiceInterface
                 $admin->notify(new \App\Notifications\WithdrawalRequestedNotification($withdrawal));
             }
 
+            Log::info('Withdrawal request created successfully', [
+                'withdrawal_id' => $withdrawal->id,
+                'campaign_id' => $withdrawal->campaign_id,
+                'amount' => $withdrawal->amount,
+                'user_id' => $withdrawal->user_id
+            ]);
+
             return $withdrawal;
         });
     }
@@ -131,6 +139,12 @@ class WithdrawalService implements WithdrawalServiceInterface
             if ($updatedWithdrawal->user) {
                 $updatedWithdrawal->user->notify(new \App\Notifications\WithdrawalProcessedNotification($updatedWithdrawal));
             }
+
+            Log::info('Withdrawal request processed by admin', [
+                'withdrawal_id' => $id,
+                'status' => $updatedWithdrawal->status,
+                'processed_by' => $updatedWithdrawal->processed_by,
+            ]);
 
             return $updatedWithdrawal;
         });

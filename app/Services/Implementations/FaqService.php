@@ -7,6 +7,7 @@ use App\Repositories\Interfaces\FaqRepositoryInterface;
 use App\Services\Interfaces\FaqServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class FaqService implements FaqServiceInterface
 {
@@ -33,6 +34,7 @@ class FaqService implements FaqServiceInterface
         $faq = $this->faqRepository->findById($id);
 
         if (!$faq) {
+            Log::warning('FAQ lookup failed: FAQ not found', ['faq_id' => $id]);
             throw new ModelNotFoundException("FAQ with ID {$id} not found.");
         }
 
@@ -52,7 +54,14 @@ class FaqService implements FaqServiceInterface
      */
     public function createFaq(array $data): Faq
     {
-        return $this->faqRepository->create($data);
+        $faq = $this->faqRepository->create($data);
+
+        Log::info('FAQ created successfully', [
+            'faq_id' => $faq->id,
+            'question' => $faq->question,
+        ]);
+
+        return $faq;
     }
 
     /**
@@ -60,7 +69,14 @@ class FaqService implements FaqServiceInterface
      */
     public function updateFaq(int $id, array $data): Faq
     {
-        return $this->faqRepository->update($id, $data);
+        $faq = $this->faqRepository->update($id, $data);
+
+        Log::info('FAQ updated successfully', [
+            'faq_id' => $id,
+            'question' => $faq->question,
+        ]);
+
+        return $faq;
     }
 
     /**
@@ -68,6 +84,8 @@ class FaqService implements FaqServiceInterface
      */
     public function deleteFaq(int $id): bool
     {
+        Log::info('FAQ deleted successfully', ['faq_id' => $id]);
+
         return $this->faqRepository->delete($id);
     }
 }

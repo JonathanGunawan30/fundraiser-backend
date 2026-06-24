@@ -6,6 +6,7 @@ use App\Repositories\Interfaces\StatRepositoryInterface;
 use App\Services\Interfaces\DashboardServiceInterface;
 use App\Models\Donation;
 use App\Models\Campaign;
+use Illuminate\Support\Facades\Log;
 
 class DashboardService implements DashboardServiceInterface
 {
@@ -15,6 +16,8 @@ class DashboardService implements DashboardServiceInterface
 
     public function getAdminDashboardData(): array
     {
+        Log::info('Admin dashboard data requested');
+        
         $stats = $this->statRepository->getGlobalStats();
         
         return [
@@ -40,6 +43,8 @@ class DashboardService implements DashboardServiceInterface
 
     public function getUserDashboardData(int $userId, ?int $days = null): array
     {
+        Log::info('User dashboard data requested', ['user_id' => $userId, 'days' => $days]);
+        
         $stats = $this->statRepository->getUserStats($userId, $days);
         
         return [

@@ -9,8 +9,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
-
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class BannerService implements BannerServiceInterface
 {
@@ -37,6 +37,7 @@ class BannerService implements BannerServiceInterface
         $banner = $this->bannerRepository->findById($id);
 
         if (!$banner) {
+            Log::warning('Banner lookup failed: Banner not found', ['banner_id' => $id]);
             throw new ModelNotFoundException("Banner with ID {$id} not found.");
         }
 
@@ -63,7 +64,15 @@ class BannerService implements BannerServiceInterface
             unset($data['image']);
         }
 
-        return $this->bannerRepository->create($data);
+        $banner = $this->bannerRepository->create($data);
+
+        Log::info('Banner created successfully', [
+            'banner_id' => $banner->id,
+            'title' => $banner->title,
+            'placement_id' => $banner->banner_placement_id,
+        ]);
+
+        return $banner;
     }
 
     /**
@@ -83,7 +92,15 @@ class BannerService implements BannerServiceInterface
             unset($data['image']);
         }
 
-        return $this->bannerRepository->update($id, $data);
+        $updatedBanner = $this->bannerRepository->update($id, $data);
+
+        Log::info('Banner updated successfully', [
+            'banner_id' => $id,
+            'title' => $updatedBanner->title,
+            'placement_id' => $updatedBanner->banner_placement_id,
+        ]);
+
+        return $updatedBanner;
     }
 
     /**
@@ -95,6 +112,8 @@ class BannerService implements BannerServiceInterface
         if ($banner->image_url) {
             $this->deleteFileFromR2($banner->image_url);
         }
+
+        Log::info('Banner deleted successfully', ['banner_id' => $id, 'title' => $banner->title]);
 
         return $this->bannerRepository->delete($id);
     }

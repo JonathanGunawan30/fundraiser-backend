@@ -13,6 +13,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Jobs\SendCampaignStatusJob;
+use Illuminate\Support\Facades\Log;
 
 class CampaignService implements CampaignServiceInterface
 {
@@ -128,6 +129,13 @@ class CampaignService implements CampaignServiceInterface
                 }
             }
 
+            Log::info('Campaign created successfully', [
+                'campaign_id' => $campaign->id, 
+                'title' => $campaign->title, 
+                'user_id' => $campaign->user_id, 
+                'status' => $campaign->status
+            ]);
+
             return $campaign;
         });
     }
@@ -196,6 +204,12 @@ class CampaignService implements CampaignServiceInterface
                 }
             }
 
+            Log::info('Campaign updated successfully', [
+                'campaign_id' => $campaign->id, 
+                'user_id' => $campaign->user_id, 
+                'status' => $campaign->status
+            ]);
+
             return $campaign;
         });
     }
@@ -223,6 +237,8 @@ class CampaignService implements CampaignServiceInterface
                 $this->deleteFromR2($image->image_url);
             }
 
+            Log::info('Campaign deleted successfully', ['campaign_id' => $id, 'user_id' => $campaign->user_id]);
+
             return $this->campaignRepository->delete($id);
         });
     }
@@ -249,6 +265,8 @@ class CampaignService implements CampaignServiceInterface
                 $status
             );
         }
+
+        Log::info('Campaign verified by admin', ['campaign_id' => $id, 'admin_id' => $adminId, 'status' => $status]);
 
         return $campaign;
     }

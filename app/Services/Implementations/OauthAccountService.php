@@ -7,6 +7,7 @@ use App\Repositories\Interfaces\OauthAccountRepositoryInterface;
 use App\Services\Interfaces\OauthAccountServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class OauthAccountService implements OauthAccountServiceInterface
 {
@@ -33,6 +34,7 @@ class OauthAccountService implements OauthAccountServiceInterface
         $oauthAccount = $this->oauthAccountRepository->findById($id);
 
         if (!$oauthAccount) {
+            Log::warning('OAuth Account lookup failed: Account not found', ['oauth_account_id' => $id]);
             throw new ModelNotFoundException("OAuth Account with ID {$id} not found.");
         }
 
