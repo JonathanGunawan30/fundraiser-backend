@@ -1,58 +1,146 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FundRaiser API Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is the backend RESTful API server for the FundRaiser crowdfunding and charity donation platform. The project is built using Laravel 13 and FrankenPHP (powered by Octane), providing high-performance, stateless API endpoints, transaction processing, and queue management.
 
-## About Laravel
+## Core Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **OAuth 2.0 Authentication**: Seamless social authentication flow using Laravel Socialite for Google and GitHub.
+- **Campaign Architecture**: Full CRUD for campaigns, category mapping, tag management, cover images, and admin verification workflow.
+- **Secure Transaction & Donation Processing**: Integrated with Midtrans payment gateway, mapping secure transaction channels, gross-to-net calculations, and invoice logging.
+- **Administrative Control Panel**: Secure admin logins authenticated via 6-digit OTP codes, banner promotions, FAQ configurations, and site settings.
+- **Global Maintenance Mode Guard**: Dedicated site status toggling. Routes under /admin are bypassed so administration panels remain fully accessible during system maintenance.
+- **Queue & Event Architecture**: Offloads long-running processes (such as email dispatches via Resend and system notifications) to a RabbitMQ queue worker.
+- **Real-time WebSockets**: Supports instant message broadcasting and real-time alerts via Laravel Reverb integration.
+- **Audit Logging**: Automated tracing of critical administrator actions for audit trails and security compliance.
+- **Pure Headless API Mode**: Web root and API entry points return structured JSON metadata status checks. All route exceptions, validation errors, and authentication failures are captured and returned in unified JSON response payloads.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Technology Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Framework**: Laravel 13
+- **Runtime Server**: FrankenPHP / PHP 8.x
+- **Message Broker**: RabbitMQ 3
+- **Cache & Key-Value Database**: Redis (TLS-enabled Valkey compatibility)
+- **Payment Gateway**: Midtrans Sandbox SDK
+- **Security Check**: Cloudflare Turnstile API
+- **Email Gateway**: Resend API
+- **Containerization**: Docker & Docker Compose
 
-## Learning Laravel
+## Getting Started
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Prerequisites
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Ensure you have the following installed:
+- PHP 8.3 or higher
+- Composer
+- Docker & Docker Compose
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Local Development Installation
 
-## Agentic Development
+1. Clone the repository and navigate to the project directory:
+   ```bash
+   cd fundraiser-backend
+   ```
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+2. Install PHP dependencies:
+   ```bash
+   composer install
+   ```
 
-```bash
-composer require laravel/boost --dev
+3. Create your local environment configuration:
+   ```bash
+   cp .env.example .env
+   ```
+   Modify the `.env` variables with your local database, Redis, RabbitMQ, and Midtrans credentials.
 
-php artisan boost:install
+4. Generate the application key:
+   ```bash
+   php artisan key:generate
+   ```
+
+5. Run database migrations and mock data seeders:
+   ```bash
+   php artisan migrate --seed
+   ```
+
+6. Start the local server:
+   ```bash
+   php artisan serve
+   ```
+
+## Environment Configuration
+
+Configure these key parameters in your `.env` file:
+
+```env
+# Application Settings
+APP_NAME=Fundraiser
+APP_ENV=local
+APP_KEY=your-app-key
+APP_URL=http://localhost:8000
+FRONTEND_URL=http://localhost:3000
+
+# Database Configuration (MySQL)
+DB_CONNECTION=mysql
+DB_HOST=your-db-host
+DB_PORT=3306
+DB_DATABASE=your-db-name
+DB_USERNAME=your-db-username
+DB_PASSWORD=your-db-password
+MYSQL_ATTR_SSL_CA=/etc/ssl/certs/aiven-ca.pem # Optional path for SSL databases
+
+# Queue Configuration (RabbitMQ)
+QUEUE_CONNECTION=rabbitmq
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_USER=guest
+RABBITMQ_PASSWORD=guest
+
+# Cache & Redis Settings
+CACHE_STORE=file
+REDIS_HOST=your-redis-host
+REDIS_PASSWORD=your-redis-password
+REDIS_PORT=6379
+
+# Midtrans Credentials
+MIDTRANS_MERCHANT_ID=your-merchant-id
+MIDTRANS_CLIENT_KEY=your-client-key
+MIDTRANS_SERVER_KEY=your-server-key
+MIDTRANS_IS_PRODUCTION=false
+
+# Security & Cloudflare
+TURNSTILE_SECRET_KEY=your-turnstile-secret-key
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Running with Docker
 
-## Contributing
+The application includes a `docker-compose.yml` to orchestrate the app service, queue worker, and RabbitMQ dependencies.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Running Containers Locally
 
-## Code of Conduct
+1. Rebuild and start the containers:
+   ```bash
+   docker compose up -d --build
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+2. Run migrations inside the running container:
+   ```bash
+   docker compose exec app php artisan migrate
+   ```
 
-## Security Vulnerabilities
+### Production Docker Guidelines
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+To ensure smooth runtime environment variable loading, the image does not cache configurations during the build stage (no `config:cache` is executed). Ensure that you supply the `.env` file at runtime:
 
-## License
+- **Via Docker run**:
+  ```bash
+  docker run -d --env-file .env -p 80:80 -p 443:443 your-image:latest
+  ```
+- **Via Docker Compose**:
+  Ensure the `env_file` section is pointing to your environment configuration in your `docker-compose.yml`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## CI/CD Pipeline
+
+The project is configured with GitHub Actions. Any merge or push to the `main` branch triggers the build workflow:
+1. Installs dependencies and checks PHP syntax.
+2. Builds the FrankenPHP Docker image.
+3. Automatically pushes the image to Docker Hub under the tag defined in your registry configurations.

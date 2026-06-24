@@ -4,7 +4,14 @@ use App\Http\Controllers\Api\UserAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json([
+        'data' => [
+            'name' => config('app.name'),
+            'version' => '1.0.0',
+            'php_version' => PHP_VERSION,
+        ],
+        'message' => 'FundRaiser API is online'
+    ]);
 });
 
 Route::prefix('auth/user/{provider}')->group(function () {

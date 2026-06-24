@@ -22,6 +22,17 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\AuditLogController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return response()->json([
+        'data' => [
+            'name' => config('app.name'),
+            'version' => '1.0.0',
+            'php_version' => PHP_VERSION,
+        ],
+        'message' => 'FundRaiser API is online'
+    ]);
+});
+
 // Prevent redirection hangs on unauthenticated API requests
 Route::get('/login', function () {
     return response()->json([

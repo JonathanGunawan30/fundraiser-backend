@@ -16,53 +16,43 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, $request) {
-            if ($request->is('api/*')) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => $e->getMessage() ?: 'An error occurred',
-                    'errors' => null,
-                ], $e->getStatusCode());
-            }
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage() ?: 'An error occurred',
+                'errors' => null,
+            ], $e->getStatusCode());
         });
 
-        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => $e->getMessage() ?: 'Unauthenticated',
-                    'errors' => null,
-                ], 401);
-            }
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage() ?: 'Unauthenticated',
+                'errors' => null,
+            ], 401);
         });
 
-        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, $request) {
-            if ($request->is('api/*')) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Validation errors',
-                    'errors' => $e->errors(),
-                ], 422);
-            }
+        $exceptions->render(function (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation errors',
+                'errors' => $e->errors(),
+            ], 422);
         });
 
-        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, $request) {
-            if ($request->is('api/*')) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => $e->getMessage() ?: 'Resource not found',
-                    'errors' => null,
-                ], 404);
-            }
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage() ?: 'Resource not found',
+                'errors' => null,
+            ], 404);
         });
 
-        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException $e, $request) {
-            if ($request->is('api/*')) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => $e->getMessage() ?: 'Access denied',
-                    'errors' => null,
-                ], 403);
-            }
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage() ?: 'Access denied',
+                'errors' => null,
+            ], 403);
         });
     })->create();
