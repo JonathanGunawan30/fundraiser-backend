@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,5 +23,10 @@ class AppServiceProvider extends ServiceProvider
         if (app()->bound('log')) {
             app('log')->pushProcessor(new \App\Logging\Processors\MaskSensitiveDataProcessor());
         }
+
+        // Allow public access to API documentation in all environments
+        Gate::define('viewApiDocs', function ($user = null) {
+            return true;
+        });
     }
 }
