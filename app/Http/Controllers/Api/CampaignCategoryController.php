@@ -31,10 +31,11 @@ class CampaignCategoryController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = $request->query('per_page', 10);
-        $categories = $this->categoryService->getAllCategories($perPage);
-
-        return $this->successWithPagination(CampaignCategoryResource::collection($categories), 'Campaign categories retrieved successfully');
+        abort(404, "test");
+//        $perPage = $request->query('per_page', 10);
+//        $categories = $this->categoryService->getAllCategories($perPage);
+//
+//        return $this->successWithPagination(CampaignCategoryResource::collection($categories), 'Campaign categories retrieved successfully');
     }
 
     /**
@@ -126,7 +127,7 @@ class CampaignCategoryController extends Controller
     {
         $keyword = $request->query('keyword', '');
         $perPage = $request->query('per_page', 10);
-        
+
         $categories = $this->categoryService->searchCategories($keyword, $perPage);
 
         return $this->successWithPagination(CampaignCategoryResource::collection($categories), 'Campaign categories search results retrieved successfully');
